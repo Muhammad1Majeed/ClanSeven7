@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>استمارة تقديم - كلان Seven 7</title>
+  <!-- خط عربي احترافي -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ===== حركة الخلفية الاحترافية ===== */
+    @keyframes bgAnimation {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Tajawal', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(-45deg, #0f0f1a, #23233d, #6a0dad, #ff6f61);
+      background-size: 400% 400%;
+      animation: bgAnimation 15s ease infinite;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(0,0,0,0.85);
+      padding: 40px 30px;
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      width: 100%;
+      max-width: 600px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #FFD700;
+      font-size: 28px;
+      font-weight: 900;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background: #1c1c2b;
+      color: #fff;
+      transition: all 0.3s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      box-shadow: 0 0 12px #FFD700;
+      transform: scale(1.02);
+    }
+
+    button {
+      background: linear-gradient(45deg, #FFD700, #FFA500);
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 25px;
+      padding: 14px;
+      width: 100%;
+      border-radius: 12px;
+      border: none;
+      font-size: 18px;
+      letter-spacing: 1px;
+      transition: all 0.4s;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #FFA500, #FFD700);
+      transform: scale(1.05);
+      box-shadow: 0 0 18px #FFD700;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 14px;
+      color: #bbb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚡️ استمارة تقديم على كلان Seven 7 ⚡️</h1>
+    <form action="https://formspree.io/f/mldwgvrq" method="POST">
+
+      <label for="name">الاسم الكامل:</label>
+      <input type="text" id="name" name="name" required placeholder="أدخل اسمك الكامل">
+
+      <label for="age">العمر:</label>
+      <input type="number" id="age" name="age" required placeholder="أدخل عمرك">
+
+      <label for="device">نوع جهازك:</label>
+      <select id="device" name="device" required>
+        <option value="">اختر نوع جهازك</option>
+        <option value="Android">📱 Android</option>
+        <option value="iPhone">🍏 iPhone</option>
+        <option value="iPad">📱 iPad</option>
+      </select>
+
+      <label for="fps">كم FPS (فريم):</label>
+      <input type="number" id="fps" name="fps" placeholder="مثلاً 60">
+
+      <label for="game-level">مستواك في اللعبة:</label>
+      <select id="game-level" name="game-level" required>
+        <option value="">اختر مستواك</option>
+        <option value="Pro">🔥 محترف</option>
+        <option value="Good">💪 جيد</option>
+        <option value="Medium">🎯 متوسط</option>
+        <option value="Ok">👌 زين</option>
+      </select>
+
+      <label for="position">مركزك في الفريق:</label>
+      <select id="position" name="position" required>
+        <option value="">اختر مركزك</option>
+        <option value="Fragger">🔫 Fragger</option>
+        <option value="Roaster">🔥 Roaster</option>
+        <option value="Sniper">🎯 Sniper</option>
+      </select>
+
+      <label for="game-id">ID حسابك في اللعبة:</label>
+      <input type="text" id="game-id" name="game-id" placeholder="أدخل ID حسابك">
+
+      <label for="contact">طريقة التواصل (Instagram / Telegram / Messenger / Facebook):</label>
+      <input type="text" id="contact" name="contact" placeholder="أدخل رابط أو اسم حسابك" required>
+
+      <button type="submit">🚀 إرسال الطلب</button>
+    </form>
+    <div class="footer">
+      &copy; 2025 Seven 7 Clan - جميع الحقوق محفوظة
+    </div>
+  </div>
+</body>
+</html>
