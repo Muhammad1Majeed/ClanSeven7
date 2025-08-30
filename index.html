@@ -13,101 +13,102 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
     }
-    .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 30px;
+    .form-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
       border-radius: 20px;
+      padding: 30px;
       width: 90%;
-      max-width: 500px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      max-width: 450px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
     }
     h1 {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       font-weight: 700;
-      color: #00d4ff;
+      color: #f9d342;
     }
     label {
       display: block;
-      margin: 15px 0 8px;
+      margin: 15px 0 5px;
       font-weight: 600;
     }
-    input, select, textarea, button {
+    input, select, textarea {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       border: none;
       border-radius: 10px;
-      font-size: 16px;
       margin-bottom: 10px;
+      font-size: 1rem;
       font-family: 'Cairo', sans-serif;
     }
-    input, select, textarea {
-      background: rgba(255,255,255,0.1);
+    select, input, textarea {
+      background: rgba(255, 255, 255, 0.2);
       color: #fff;
     }
-    textarea {
-      resize: none;
-      height: 80px;
-    }
+    option {color: #000;}
     button {
-      background: #00d4ff;
-      color: #000;
+      width: 100%;
+      padding: 12px;
+      background: #f9d342;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2rem;
       font-weight: 700;
       cursor: pointer;
-      transition: 0.3s;
+      transition: 0.3s ease;
     }
-    button:hover {
-      background: #00a6cc;
-    }
-    option {
-      background: #203a43;
-    }
+    button:hover {background: #ffb400;}
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🛡️ تقديم على كلان Seven 7</h1>
+  <div class="form-container">
+    <h1>استمارة التقديم على كلان Seven 7</h1>
     <form action="https://formspree.io/f/mldwgvrq" method="POST">
-      <label>اسمك الكامل :</label>
-      <input type="email" name="email" required><label>ID حسابك في العبه </label>
-  <input type="text" name="game_id" required>
-
-  <label>اختر نوع جهازك:</label>
+      <label>اسمك الكامل:</label>
+      <input type="text" name="name" placeholder="اكتب اسمك الكامل" required><label>نوع جهازك:</label>
   <select name="device" required>
-    <option value="android">📱 أندرويد</option>
-    <option value="iphone">🍏 آيفون</option>
-    <option value="ipad">📟 آيباد</option>
+    <option value="">اختر نوع جهازك</option>
+    <option>اندرويد</option>
+    <option>ايفون</option>
+    <option>ايباد</option>
   </select>
 
-  <label>اختر عدد الفريمات:</label>
-  <select name="fps" required>
-    <option value="120">120 FPS</option>
-    <option value="90">90 FPS</option>
-    <option value="60">60 FPS</option>
-    <option value="40">40 FPS</option>
+  <label>عدد الفريمات:</label>
+  <select name="frames" required>
+    <option value="">اختر عدد الفريمات</option>
+    <option>120</option>
+    <option>90</option>
+    <option>60</option>
+    <option>40</option>
   </select>
 
-  <label>اختر مركزك في الفريق:</label>
+  <label>مركزك في الفريق:</label>
   <select name="role" required>
-    <option value="fragger">🔥 فراقر</option>
-    <option value="roster">🎯 روستر</option>
-    <option value="sniper">🎮 سنايبر</option>
+    <option value="">اختر مركزك</option>
+    <option>فراكر</option>
+    <option>روستر</option>
+    <option>سنايبر</option>
   </select>
 
-  <label>اختر مستواك في اللعبة:</label>
+  <label>مستواك في اللعبة:</label>
   <select name="level" required>
-    <option value="pro">🏆 محترف</option>
-    <option value="good">💪 جيد</option>
-    <option value="average">🎮 متوسط</option>
-    <option value="basic">🙂 زين</option>
+    <option value="">اختر مستواك</option>
+    <option>محترف</option>
+    <option>جيد</option>
+    <option>متوسط</option>
+    <option>ضعيف</option>
   </select>
 
-  <label>رابط حساب التواصل (إنستغرام/تليجرام/ ماسنجر:</label>
-  <input type="text" name="contact" required>
+  <label>ID حسابك في اللعبة:</label>
+  <input type="text" name="game_id" placeholder="اكتب ID حسابك" required>
 
-  <button type="submit">🚀 إرسال الطلب</button>
+  <label>طريقة التواصل معك:</label>
+  <input type="text" name="contact" placeholder="انستغرام، تيليجرام، ماسنجر ...">
+
+  <button type="submit">إرسال الطلب</button>
 </form>
 
   </div>
