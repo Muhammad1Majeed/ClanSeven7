@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هل أنتي ملاك؟</title>
+<style>
+    /* خطوط وألوان احترافية */
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+    body {
+        font-family: 'Cairo', sans-serif;
+        background: linear-gradient(to bottom, #ffc0cb, #ffe4e1);
+        text-align: center;
+        padding: 50px 20px;
+        color: #fff;
+    }
+    h1, p {
+        margin-bottom: 20px;
+    }
+    h1 {
+        font-size: 2.5em;
+        text-shadow: 2px 2px 5px #ff69b4;
+        transition: transform 0.3s ease;
+    }
+    p {
+        font-size: 1.5em;
+        text-shadow: 1px 1px 5px #ff69b4;
+    }
+    button {
+        background-color: #ff69b4;
+        border: none;
+        color: white;
+        padding: 15px 35px;
+        font-size: 1.2em;
+        margin: 10px;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
+    }
+    button:hover {
+        transform: scale(1.1);
+        background-color: #ff1493;
+        box-shadow: 0 8px 20px rgba(255, 20, 147, 0.6);
+    }
+
+    .step {
+        display: none;
+        margin-top: 30px;
+    }
+
+    /* تأثير نبض وحماس */
+    .bounce {
+        animation: bounce 0.8s infinite alternate;
+    }
+    @keyframes bounce {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.15); }
+        100% { transform: scale(1); }
+    }
+    .glow {
+        animation: glow 1s infinite alternate;
+    }
+    @keyframes glow {
+        0% { text-shadow: 2px 2px 5px #ff69b4; color: #fff; }
+        50% { text-shadow: 0 0 25px #ff1493; color: #ff69b4; }
+        100% { text-shadow: 2px 2px 5px #ff69b4; color: #fff; }
+    }
+
+    /* نص المفاجأة النهائي */
+    .finalText {
+        font-size: 3em;
+        font-weight: bold;
+        margin: 20px auto;
+        color: #ff1493;
+        text-shadow: 2px 2px 10px #fff;
+    }
+    #finalImage img {
+        width: 250px;
+        border-radius: 20px;
+        box-shadow: 0 0 20px #ff69b4;
+        animation: pop 1s ease-in-out forwards;
+    }
+    @keyframes pop {
+        0% { transform: scale(0); }
+        100% { transform: scale(1); }
+    }
+
+</style>
+</head>
+<body>
+
+<!-- الخطوة 1: هل انتي ملاك -->
+<div id="step1" class="step" style="display:block;">
+    <h1>هل أنتي ملاك؟ 😇</h1>
+    <button onclick="nextStep(2)">نعم</button>
+</div>
+
+<!-- الخطوة 2: سؤال محمد مجيد -->
+<div id="step2" class="step">
+    <h1 id="questionFromMohamed" class="bounce glow">السؤال من محمد مجيد:</h1>
+    <p id="exciteText" class="bounce">جاهزة للمفاجأة؟ 🔥💖</p>
+    <button onclick="nextStep(3)">التالي</button>
+</div>
+
+<!-- الخطوة 3: لدينا مفاجأة لك -->
+<div id="step3" class="step">
+    <h1 class="bounce glow">لدينا مفاجأة لكِ… جاهزة؟ 🎉</h1>
+    <button onclick="nextStep(4)">أظهر المفاجأة!</button>
+</div>
+
+<!-- الخطوة 4: المفاجأة النهائية -->
+<div id="step4" class="step">
+    <span class="finalText">شتحسين الله عليج 🌟</span>
+    <div id="finalImage">
+        <img src="https://d.top4top.io/p_3725z635s1.jpg" alt="ملاك">
+    </div>
+</div>
+
+<script>
+function nextStep(stepNumber) {
+    document.querySelectorAll('.step').forEach(div => div.style.display = 'none');
+    document.getElementById('step' + stepNumber).style.display = 'block';
+}
+</script>
+
+</body>
+</html>
