@@ -1,129 +1,514 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>هل أنتي ملاك؟</title>
-<style>
-    /* خطوط وألوان احترافية */
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS المجمع - الإدارة الذكية</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    body {
-        font-family: 'Cairo', sans-serif;
-        background: linear-gradient(to bottom, #ffc0cb, #ffe4e1);
-        text-align: center;
-        padding: 50px 20px;
-        color: #fff;
-    }
-    h1, p {
-        margin-bottom: 20px;
-    }
-    h1 {
-        font-size: 2.5em;
-        text-shadow: 2px 2px 5px #ff69b4;
-        transition: transform 0.3s ease;
-    }
-    p {
-        font-size: 1.5em;
-        text-shadow: 1px 1px 5px #ff69b4;
-    }
-    button {
-        background-color: #ff69b4;
-        border: none;
-        color: white;
-        padding: 15px 35px;
-        font-size: 1.2em;
-        margin: 10px;
-        border-radius: 15px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
-    }
-    button:hover {
-        transform: scale(1.1);
-        background-color: #ff1493;
-        box-shadow: 0 8px 20px rgba(255, 20, 147, 0.6);
-    }
+    <style>
+        /* المتغيرات الأساسية لدعم الـ Dark/Light Themes وتصميم الـ Modern/Futuristic */
+        :root {
+            --bg-body: #060b13;
+            --bg-glass: rgba(15, 23, 42, 0.7);
+            --border-glass: rgba(6, 182, 212, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #06b6d4;
+            --secondary: #3b82f6;
+            --accent: #a855f7;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --shadow-glass: 0 10px 40px rgba(0, 0, 0, 0.4);
+            --font-main: 'Cairo', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    .step {
-        display: none;
-        margin-top: 30px;
-    }
+        [data-theme="light"] {
+            --bg-body: #f1f5f9;
+            --bg-glass: rgba(255, 255, 255, 0.85);
+            --border-glass: rgba(0, 0, 0, 0.1);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --shadow-glass: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --primary: #0284c7;
+        }
 
-    /* تأثير نبض وحماس */
-    .bounce {
-        animation: bounce 0.8s infinite alternate;
-    }
-    @keyframes bounce {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.15); }
-        100% { transform: scale(1); }
-    }
-    .glow {
-        animation: glow 1s infinite alternate;
-    }
-    @keyframes glow {
-        0% { text-shadow: 2px 2px 5px #ff69b4; color: #fff; }
-        50% { text-shadow: 0 0 25px #ff1493; color: #ff69b4; }
-        100% { text-shadow: 2px 2px 5px #ff69b4; color: #fff; }
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); outline: none; }
+        
+        body { 
+            background-color: var(--bg-body); color: var(--text-main); 
+            background-image: radial-gradient(at 0% 0%, rgba(6,182,212,0.1) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(168,85,247,0.08) 0, transparent 50%);
+            background-attachment: fixed; transition: var(--transition);
+        }
 
-    /* نص المفاجأة النهائي */
-    .finalText {
-        font-size: 3em;
-        font-weight: bold;
-        margin: 20px auto;
-        color: #ff1493;
-        text-shadow: 2px 2px 10px #fff;
-    }
-    #finalImage img {
-        width: 250px;
-        border-radius: 20px;
-        box-shadow: 0 0 20px #ff69b4;
-        animation: pop 1s ease-in-out forwards;
-    }
-    @keyframes pop {
-        0% { transform: scale(0); }
-        100% { transform: scale(1); }
-    }
+        /* حاويات الزجاج المتقدمة */
+        .glass-panel {
+            background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass); border-radius: 20px; box-shadow: var(--shadow-glass);
+            padding: 24px; transition: var(--transition);
+        }
 
-</style>
+        .layout-grid { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+
+        /* القائمة الجانبية */
+        aside { border-left: 1px solid var(--border-glass); padding: 30px 20px; display: flex; flex-direction: column; gap: 30px; background: rgba(0,0,0,0.1); }
+        .brand h1 { font-size: 1.5rem; font-weight: 900; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .nav-links a { display: flex; align-items: center; gap: 12px; padding: 14px 16px; color: var(--text-muted); text-decoration: none; border-radius: 12px; font-weight: 600; transition: var(--transition); }
+        .nav-links a:hover, .nav-links a.active { background: rgba(6, 182, 212, 0.1); color: var(--primary); transform: translateX(-5px); }
+
+        /* محدد الشهر الدائري */
+        .month-selector { margin-top: 10px; }
+        .month-selector select { width: 100%; background: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-glass); padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+
+        /* لوحة المشغل الذكية */
+        .operator-card { margin-top: auto; padding: 20px; background: linear-gradient(145deg, rgba(6,182,212,0.1), rgba(15,23,42,0)); border: 1px solid var(--border-glass); border-radius: 16px; position: relative; overflow: hidden; }
+        .operator-card::before { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: var(--primary); }
+        .operator-card h4 { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .operator-card h2 { font-size: 1.2rem; margin: 8px 0; color: var(--text-main); }
+        .operator-card p { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; }
+
+        /* الشاشة الرئيسية */
+        main { padding: 40px; display: flex; flex-direction: column; gap: 25px; max-width: 1600px; width: 100%; margin: 0 auto; }
+        
+        .top-bar { display: flex; justify-content: space-between; align-items: center; }
+        .search-box { position: relative; width: 350px; }
+        .search-box i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-box input { width: 100%; background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 12px 40px 12px 15px; border-radius: 20px; color: var(--text-main); transition: var(--transition); }
+        .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); }
+        
+        .header-actions { display: flex; gap: 15px; }
+        .btn-icon { background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main); width: 45px; height: 45px; border-radius: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: var(--transition); }
+        .btn-icon:hover { background: var(--primary); color: #fff; border-color: transparent; transform: translateY(-3px); }
+
+        /* كروت الإحصائيات */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .kpi-card { display: flex; align-items: center; justify-content: space-between; }
+        .kpi-info h3 { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; }
+        .kpi-info .val { font-size: 1.8rem; font-weight: 900; }
+        .kpi-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; }
+        .bg-p { background: rgba(6,182,212,0.1); color: var(--primary); }
+        .bg-s { background: rgba(16,185,129,0.1); color: var(--success); }
+        .bg-d { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+        /* قسم الذكاء الاصطناعي والرسوم */
+        .analytics-row { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .ai-assistant { border-right: 4px solid var(--accent); background: linear-gradient(90deg, rgba(168,85,247,0.05), transparent); }
+        .ai-assistant p { font-size: 0.95rem; line-height: 1.6; margin-top: 10px; color: var(--text-main); }
+        .ai-badge { display: inline-block; padding: 4px 10px; background: rgba(168,85,247,0.2); color: var(--accent); border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
+
+        /* جدول الدفوعات التفاعلي */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th { padding: 15px; color: var(--text-muted); font-size: 0.85rem; border-bottom: 1px solid var(--border-glass); }
+        td { padding: 15px; border-bottom: 1px solid var(--border-glass); font-weight: 600; font-size: 0.95rem; transition: var(--transition); }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .status-badge { padding: 6px 16px; border-radius: 30px; font-size: 0.8rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: var(--transition); user-select: none; border: 1px solid transparent; }
+        .status-badge:hover { transform: scale(1.05); }
+        .status-paid { background: rgba(16,185,129,0.15); color: var(--success); border-color: rgba(16,185,129,0.3); }
+        .status-unpaid { background: rgba(239,68,68,0.15); color: var(--danger); border-color: rgba(239,68,68,0.3); }
+
+        /* الإشعارات Toast */
+        #toast-container { position: fixed; bottom: 30px; left: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; }
+        .toast { background: var(--bg-glass); backdrop-filter: blur(10px); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.4s ease-out forwards; }
+        .toast.success i { color: var(--success); }
+        .toast.warning i { color: var(--warning); }
+        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
+
+        /* نافذة السجلات Logs Modal */
+        #logs-modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .logs-box { background: var(--bg-body); border: 1px solid var(--border-glass); width: 600px; max-height: 80vh; border-radius: 20px; padding: 25px; overflow-y: auto; }
+        .log-item { padding: 12px 0; border-bottom: 1px solid var(--border-glass); font-size: 0.85rem; color: var(--text-muted); }
+        .log-item strong { color: var(--text-main); }
+        .close-btn { float: left; background: var(--danger); color: #fff; border: none; padding: 5px 10px; border-radius: 8px; cursor: pointer; }
+
+        @media print { body * { visibility: hidden; } .table-container, .table-container * { visibility: visible; } .table-container { position: absolute; left: 0; top: 0; width: 100%; } }
+        @media (max-width: 900px) { .layout-grid { grid-template-columns: 1fr; } aside { border-left: none; border-bottom: 1px solid var(--border-glass); } .analytics-row { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
 
-<!-- الخطوة 1: هل انتي ملاك -->
-<div id="step1" class="step" style="display:block;">
-    <h1>هل أنتي ملاك؟ 😇</h1>
-    <button onclick="nextStep(2)">نعم</button>
-</div>
+    <div class="layout-grid">
+        <aside>
+            <div class="brand">
+                <h1>مجمع البوشهاب</h1>
+                <p style="color:var(--text-muted); font-size:0.8rem; margin-top:5px;">SaaS الإدارة المركزية المتطورة</p>
+            </div>
+            
+            <div class="month-selector">
+                <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; display: block;">سجل بيانات الدفع لـ:</label>
+                <select id="monthSelect" onchange="changeMonth()">
+                    <option value="7">الشهر السابع (يوليو)</option>
+                    <option value="8">الشهر الثامن (أغسطس)</option>
+                    <option value="9">الشهر التاسع (سبتمبر)</option>
+                    <option value="10">الشهر العاشر (أكتوبر)</option>
+                    <option value="11">الشهر الحادي عشر (نوفمبر)</option>
+                    <option value="12">الشهر الثاني عشر (ديسمبر)</option>
+                </select>
+            </div>
 
-<!-- الخطوة 2: سؤال محمد مجيد -->
-<div id="step2" class="step">
-    <h1 id="questionFromMohamed" class="bounce glow">السؤال من محمد مجيد:</h1>
-    <p id="exciteText" class="bounce">جاهزة للمفاجأة؟ 🔥💖</p>
-    <button onclick="nextStep(3)">التالي</button>
-</div>
+            <ul class="nav-links">
+                <li><a href="#" class="active"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم الذكية</a></li>
+                <li><a href="#" onclick="showLogs()"><i class="fa-solid fa-clipboard-list"></i> سجل العمليات (Logs)</a></li>
+                <li><a href="#" onclick="exportExcel()"><i class="fa-solid fa-file-excel"></i> تصدير البيانات (Excel)</a></li>
+                <li><a href="#" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> استخراج تقرير PDF</a></li>
+            </ul>
 
-<!-- الخطوة 3: لدينا مفاجأة لك -->
-<div id="step3" class="step">
-    <h1 class="bounce glow">لدينا مفاجأة لكِ… جاهزة؟ 🎉</h1>
-    <button onclick="nextStep(4)">أظهر المفاجأة!</button>
-</div>
+            <div class="operator-card">
+                <h4><i class="fa-solid fa-user-tie"></i> المشغل الميداني النشط</h4>
+                <h2 id="currentOpName">--</h2>
+                <p><span>بداية:</span> <strong id="opStart">--</strong></p>
+                <p><span>نهاية:</span> <strong id="opEnd">--</strong></p>
+            </div>
+        </aside>
 
-<!-- الخطوة 4: المفاجأة النهائية -->
-<div id="step4" class="step">
-    <span class="finalText">شتحسين الله عليج 🌟</span>
-    <div id="finalImage">
-        <img src="https://d.top4top.io/p_3725z635s1.jpg" alt="ملاك">
+        <main>
+            <div class="top-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="ابحث عن رقم الدار أو اسم المشترك...">
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon" onclick="toggleTheme()" title="تبديل الإضاءة"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+                    <button class="btn-icon" onclick="resetSystemData()" title="تفريغ النظام وإعادة ضبط المصنع"><i class="fa-solid fa-rotate-right"></i></button>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="glass-panel kpi-card">
+                    <div class="kpi-info">
+                        <h3>إجمالي الدور (الشهر الحالي)</h3>
+                        <div class="val" id="kpiTotal">0</div>
+                    </div>
+                    <div class="kpi-icon bg-p"><i class="fa-solid fa-house"></i></div>
+                </div>
+                <div class="glass-panel kpi-card">
+                    <div class="kpi-info">
+                        <h3>تم السداد (محصل)</h3>
+                        <div class="val" id="kpiPaid" style="color: var(--success);">0</div>
+                    </div>
+                    <div class="kpi-icon bg-s"><i class="fa-solid fa-check"></i></div>
+                </div>
+                <div class="glass-panel kpi-card">
+                    <div class="kpi-info">
+                        <h3>لم يسدد (ديون)</h3>
+                        <div class="val" id="kpiUnpaid" style="color: var(--danger);">0</div>
+                    </div>
+                    <div class="kpi-icon bg-d"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                </div>
+            </div>
+
+            <div class="analytics-row">
+                <div class="glass-panel ai-assistant">
+                    <span class="ai-badge"><i class="fa-solid fa-robot"></i> التحليل الآلي للذكاء الاصطناعي (AI)</span>
+                    <h3 style="margin-bottom: 10px;">تقرير الأداء الفوري للشهر <span id="aiMonthText">7</span></h3>
+                    <p id="aiReportText">جاري معالجة بيانات السداد والمشغلين...</p>
+                    <div style="margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.85rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--warning);"></i> <span id="aiSuggestion">توصية النظام</span>
+                    </div>
+                </div>
+                <div class="glass-panel">
+                    <h3 style="font-size: 1rem; margin-bottom: 15px; text-align: center;">نسبة التحصيل</h3>
+                    <div style="height: 180px; position: relative;"><canvas id="chartPie"></canvas></div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
+                    <h3 style="font-size: 1.1rem;"><i class="fa-solid fa-list-check" style="color: var(--primary);"></i> جدول الدفوعات النشط (الشهر <span id="tableMonthTitle">7</span>)</h3>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">انقر على حالة الدفع لتعديلها فورياً</span>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>التسلسل</th>
+                                <th>اسم الدار / المشترك</th>
+                                <th>قيمة الاشتراك</th>
+                                <th>حالة الدفع (الشهر المحدد)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
-</div>
 
-<script>
-function nextStep(stepNumber) {
-    document.querySelectorAll('.step').forEach(div => div.style.display = 'none');
-    document.getElementById('step' + stepNumber).style.display = 'block';
-}
-</script>
+    <div id="logs-modal">
+        <div class="logs-box">
+            <button class="close-btn" onclick="document.getElementById('logs-modal').style.display='none'">إغلاق</button>
+            <h2 style="margin-bottom: 20px; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px;">سجل العمليات الأمني (Audit Logs)</h2>
+            <div id="logsContainer"></div>
+        </div>
+    </div>
 
+    <div id="toast-container"></div>
+
+    <script>
+        // 1. نظام الدورة الزمنية المستقر (Rotation Engine)
+        // توجيه الخوارزمية حسب الطلب: (احمد يبدأ غداً 31 مايو 2026. مهند اليوم 30 مايو هو آخر يوم له)
+        const ANCHOR_DATE = new Date('2026-05-31T00:00:00'); // نقطة انطلاق احمد (دورة جديدة)
+        const OPERATORS = [
+            "احمد ماجد عبدالله", // Index 0 (يبدأ 31/5)
+            "محمد شعلان ضاري",   // Index 1 (يبدأ 3/6)
+            "حمزه مجيد عبدالله", // Index 2 (يبدأ 6/6)
+            "مهند عدنان ضاري"    // Index 3 (يبدأ 9/6، دورته السابقة كانت 28، 29، 30 مايو)
+        ];
+
+        let activeOp = "";
+        let currentMonth = "7";
+        let db = { houses: [], logs: [] };
+        const DB_KEY = "SaaS_AlBushehab_v2";
+
+        const RAW_DATA = [
+            "سامي نافع", "سامي خليفة", "سلام صباح", "محمد سليمان", "شهاب حامد", "حمادة خليفة", "احمد خليفة", "صباح خلف", "شهاب خلف", "عبدالله خلف", "علي خلف", "صالح علي", "علي رشيد",
+            "مجيد خلف", "فؤاد دحام", "عماد دحام", "قاسم طعمه", "عصام طعمه", "جاسم طعمه", "شاكر محمود", "يوسف خلف", "عارف جاسم", "محمد جاسم", "حسن محمد فيصل", "طارق فهد", "محمد طارق",
+            "اياد طارق", "سعدون الفهد", "سعود فهد", "علي حامد", "محمد حامد", "وسام حامد", "ماهر ناجي", "مفيد حميد", "احمد مفيد", "عمر نافع", "نافع محمد", 
+            "سمير مجيد", "سمير سالم", "محمد حميد ضاري", "محمد حسين", "صباح ذياب", "حسين خليفة", "ساجر صبار", "ثامر بزيغ", "ناصر بزيغ", "عزيز فريح", "سعد خميس", "مضحي خميس", "مزهر صبار",
+            "وعد نجمان", "قيس صبار", "حميد عواد", "محمد عواد", "شاكر حامد", "خليل وكالة", "منعم حميد عواد", "اثير ابراهيم", "ابراهيم حسون", "عدنان حسون", "جميل حسون", "حميد حسون", "زهير خليل حسون",
+            "خليل حسون", "سمير حميد", "امير حميد", "منير حميد", "عماد طارق", "محمد حسن", "محمد شهاب مصلح", "عمر خالد", "احمد عبيد خلف", "رحمن عبيد", "صلاح خضير",
+            "محمد ابراهيم", "حسام جاسم", "جسام محمد حديد", "محمد جمعة", "انور صباح", "رعد فهد", "فارس اسماعيل"
+        ];
+
+        let myChart = null;
+
+        // تهيئة النظام
+        function initApp() {
+            calculateRotation();
+            
+            const savedData = localStorage.getItem(DB_KEY);
+            if (savedData) {
+                db = JSON.parse(savedData);
+            } else {
+                buildInitialDB();
+            }
+            
+            // تهيئة الوضع الليلي/النهاري
+            if(localStorage.getItem('saas_theme') === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
+            }
+
+            renderUI();
+            
+            // تنبيه الدخول الافتتاحي
+            setTimeout(() => showToast(`تم تسجيل الدخول. المشغل الحالي: ${activeOp}`, 'success'), 1000);
+        }
+
+        // بناء قاعدة البيانات المستقلة للشهور
+        function buildInitialDB() {
+            db.houses = [];
+            db.logs = [];
+            let idCounter = 1;
+            RAW_DATA.forEach(name => {
+                if(idCounter === 38) idCounter = 40;
+                if(idCounter === 74) idCounter = 76;
+                if(idCounter === 84) idCounter = 85;
+                
+                db.houses.push({
+                    id: idCounter, name: name, 
+                    payments: { "7": false, "8": false, "9": false, "10": false, "11": false, "12": false }
+                });
+                idCounter++;
+            });
+            saveDB();
+        }
+
+        function saveDB() { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+
+        // الخوارزمية الرياضية لحساب مناوبات المشغلين الميدانية بدقة
+        function calculateRotation() {
+            const now = new Date();
+            // تصحيح فوارق التوقيت لضمان التبديل بمنتصف الليل
+            const nowUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+            const anchorUTC = Date.UTC(ANCHOR_DATE.getFullYear(), ANCHOR_DATE.getMonth(), ANCHOR_DATE.getDate());
+            
+            const msPerDay = 1000 * 60 * 60 * 24;
+            let diffDays = Math.floor((nowUTC - anchorUTC) / msPerDay);
+            
+            let cycleDay = ((diffDays % 12) + 12) % 12; 
+            let opIndex = Math.floor(cycleDay / 3);
+            activeOp = OPERATORS[opIndex];
+
+            let daysIntoShift = cycleDay % 3;
+            let shiftStartDays = diffDays - daysIntoShift;
+            
+            let startDate = new Date(anchorUTC + (shiftStartDays * msPerDay));
+            let endDate = new Date(startDate.getTime() + (2 * msPerDay)); 
+
+            document.getElementById('currentOpName').innerText = activeOp;
+            document.getElementById('opStart').innerText = startDate.toLocaleDateString('ar-IQ');
+            document.getElementById('opEnd').innerText = endDate.toLocaleDateString('ar-IQ');
+        }
+
+        function changeMonth() {
+            currentMonth = document.getElementById('monthSelect').value;
+            document.getElementById('tableMonthTitle').innerText = currentMonth;
+            document.getElementById('aiMonthText').innerText = currentMonth;
+            renderUI();
+        }
+
+        // رندرة وبناء الواجهة التفاعلية
+        function renderUI() {
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+            
+            let paidCount = 0;
+            let totalCount = db.houses.length;
+
+            db.houses.forEach(h => {
+                const isPaid = h.payments[currentMonth];
+                if (isPaid) paidCount++;
+
+                const tr = document.createElement('tr');
+                tr.className = 'table-row';
+                const badgeClass = isPaid ? 'status-paid' : 'status-unpaid';
+                const badgeIcon = isPaid ? '<i class="fa-solid fa-check"></i> تم السداد' : '<i class="fa-solid fa-xmark"></i> لم يسدد';
+                
+                tr.innerHTML = `
+                    <td style="color:var(--primary);"># ${h.id}</td>
+                    <td>${h.name}</td>
+                    <td>5,000 د.ع</td>
+                    <td><div class="status-badge ${badgeClass}" onclick="togglePayment(${h.id}, '${h.name}')">${badgeIcon}</div></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('kpiTotal').innerText = totalCount;
+            document.getElementById('kpiPaid').innerText = paidCount;
+            document.getElementById('kpiUnpaid').innerText = totalCount - paidCount;
+
+            updateChart(paidCount, totalCount - paidCount);
+            runAIAssistant(paidCount, totalCount);
+            filterTable(); // تطبيق الفلتر إن وجد
+        }
+
+        // تعديل حالة الدفع اللحظية وتسجيل السجل الأمني
+        function togglePayment(id, name) {
+            const house = db.houses.find(h => h.id === id);
+            const newState = !house.payments[currentMonth];
+            house.payments[currentMonth] = newState;
+            
+            const statusText = newState ? "تم السداد" : "إلغاء السداد";
+            addLog(`قام المشغل [${activeOp}] بتغيير حالة المشترك "${name}" لشهر ${currentMonth} إلى: ${statusText}`);
+            
+            saveDB();
+            renderUI();
+            
+            showToast(`تم تحديث حالة الدار ${id} بنجاح`, newState ? 'success' : 'warning');
+        }
+
+        // محرك الذكاء الاصطناعي لتحليل البيانات
+        function runAIAssistant(paid, total) {
+            const percentage = total === 0 ? 0 : Math.round((paid / total) * 100);
+            const textEl = document.getElementById('aiReportText');
+            const sugEl = document.getElementById('aiSuggestion');
+
+            if (percentage >= 80) {
+                textEl.innerHTML = `نسبة التحصيل ممتازة <strong>(${percentage}%)</strong>. الإيرادات مستقرة بفضل جهود فريق المشغلين.`;
+                textEl.style.color = "var(--success)";
+                sugEl.innerText = "اقتراح: يمكن أرشفة الشهر كـ 'مكتمل' والتركيز الميداني على تجهيز الجباية للشهر الذي يليه.";
+            } else if (percentage >= 40) {
+                textEl.innerHTML = `نسبة التحصيل متوسطة <strong>(${percentage}%)</strong>. هناك تقدم لكن يوجد بطء في سداد بعض القطاعات.`;
+                textEl.style.color = "var(--warning)";
+                sugEl.innerText = `اقتراح: توجيه المشغل الحالي (${activeOp}) لإجراء جولة إضافية في المناطق المتأخرة للوصول إلى المستهدف.`;
+            } else {
+                textEl.innerHTML = `نسبة التحصيل منخفضة جداً وخطرة <strong>(${percentage}%)</strong>. تدفق الإيرادات ضعيف جداً هذا الشهر.`;
+                textEl.style.color = "var(--danger)";
+                sugEl.innerText = "اقتراح تنفيذي عاجل: إصدار إشعارات فورية ورقية للمشتركين المتأخرين لتحصيل الديون وتفادي التراكم.";
+            }
+        }
+
+        function updateChart(paid, unpaid) {
+            const ctx = document.getElementById('chartPie').getContext('2d');
+            if(myChart) myChart.destroy();
+            
+            const isLight = document.body.getAttribute('data-theme') === 'light';
+            Chart.defaults.color = isLight ? '#64748b' : '#94a3b8';
+            Chart.defaults.font.family = 'Cairo';
+
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['مسدد', 'ديون'],
+                    datasets: [{ data: [paid, unpaid], backgroundColor: ['#10b981', '#ef4444'], borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right' } } }
+            });
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('.table-row');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // نظام السجلات والتوثيق المرجعي
+        function addLog(msg) {
+            const now = new Date().toLocaleString('ar-IQ');
+            db.logs.unshift({ time: now, msg: msg });
+            if(db.logs.length > 50) db.logs.pop(); // الاحتفاظ بآخر 50 عملية لعدم إثقال الذاكرة
+        }
+
+        function showLogs() {
+            const container = document.getElementById('logsContainer');
+            container.innerHTML = db.logs.map(l => `<div class="log-item">[${l.time}] <strong>${l.msg}</strong></div>`).join('');
+            if(db.logs.length === 0) container.innerHTML = "<p>لا توجد حركات مسجلة بعد.</p>";
+            document.getElementById('logs-modal').style.display = 'flex';
+        }
+
+        // الإشعارات المنبثقة
+        function showToast(msg, type) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? 'fa-circle-check' : 'fa-bell';
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.animation = 'fadeOut 0.4s ease forwards'; setTimeout(() => toast.remove(), 400); }, 3000);
+        }
+
+        function toggleTheme() {
+            const isLight = document.body.getAttribute('data-theme') === 'light';
+            if(isLight) {
+                document.body.removeAttribute('data-theme');
+                document.getElementById('themeIcon').classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('saas_theme', 'dark');
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('saas_theme', 'light');
+            }
+            renderUI(); // إعادة رسم الشارت بالألوان الجديدة
+        }
+
+        function exportExcel() {
+            let csv = `\uFEFFرقم الدار,الاسم,قيمة الاشتراك,حالة الدفع (شهر ${currentMonth})\n`;
+            db.houses.forEach(h => { csv += `${h.id},${h.name},5000,${h.payments[currentMonth] ? 'مسدد' : 'لم يسدد'}\n`; });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `تقرير_شهر_${currentMonth}.csv`; link.click();
+        }
+
+        function resetSystemData() {
+            if(confirm("هل أنت متأكد من رغبتك في تصفير جميع البيانات نهائياً والعودة لنقطة الصفر؟")) {
+                localStorage.removeItem(DB_KEY);
+                location.reload();
+            }
+        }
+
+        window.onload = initApp;
+    </script>
 </body>
 </html>
