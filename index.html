@@ -3,326 +3,511 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shabakaty - Premium Player</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Shabakaty Max | Premium Streaming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-base: #050507;
-            --surface: rgba(20, 20, 25, 0.7);
-            --neon-cyan: #00f0ff;
-            --neon-blue: #0051ff;
-            --live-red: #ff003c;
+            --bg-dark: #050508;
+            --bg-surface: rgba(20, 20, 30, 0.6);
+            --brand-primary: #6a11cb;
+            --brand-secondary: #2575fc;
+            --accent-neon: #00f2fe;
+            --live-red: #ff2a2a;
             --text-main: #ffffff;
-            --glass-border: rgba(0, 240, 255, 0.15);
+            --text-muted: #8e95a5;
+            --transition-smooth: all 0.3s ease;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; user-select: none; outline: none; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--brand-primary); border-radius: 10px; }
 
         body {
-            background-color: var(--bg-base);
-            background-image: radial-gradient(circle at 50% 0%, #11111a 0%, #050507 70%);
-            color: var(--text-main);
-            min-height: 100vh;
+            background-color: var(--bg-dark); color: var(--text-main); height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column;
+            background-image: radial-gradient(circle at 15% 50%, rgba(106, 17, 203, 0.15), transparent 25%);
         }
 
-        /* --- شاشة التحميل الفعلية --- */
-        #loader-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-base);
+        /* --- شاشة التحميل --- */
+        #loader {
+            position: fixed; inset: 0; background: var(--bg-dark); z-index: 99999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999; transition: opacity 0.5s ease;
+            transition: opacity 0.8s ease, visibility 0.8s;
         }
-        .spinner {
-            width: 60px; height: 60px;
-            border: 4px solid rgba(0, 240, 255, 0.1);
-            border-top-color: var(--neon-cyan);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        .logo-glow {
+            font-size: 3rem; font-weight: 900; background: linear-gradient(to right, var(--brand-primary), var(--accent-neon));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; margin-bottom: 20px;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loader-text { margin-top: 20px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-cyan); }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } }
 
-        /* --- الهيدر --- */
-        header {
-            padding: 20px 40px;
-            background: rgba(5, 5, 7, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .brand { font-size: 26px; font-weight: 900; letter-spacing: 3px; color: #fff; text-shadow: 0 0 15px var(--neon-blue); }
+        /* --- الهيكل الرئيسي --- */
+        #app-container { display: flex; height: 100vh; width: 100vw; position: relative; }
 
-        /* --- المشغل الاحترافي المخصص --- */
-        .player-wrapper {
-            max-width: 1200px; margin: 30px auto;
-            position: relative; border-radius: 20px; overflow: hidden;
-            background: #000; box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0, 240, 255, 0.2);
-            border: 1px solid var(--glass-border);
+        /* --- الشريط الجانبي --- */
+        .sidebar {
+            width: 80px; background: rgba(10, 10, 15, 0.8); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; align-items: center; padding: 30px 0; gap: 40px; z-index: 100; transition: width 0.3s ease;
         }
-        .player-wrapper:hover .custom-controls, .player-wrapper.active .custom-controls {
-            opacity: 1; transform: translateY(0);
+        .sidebar:hover { width: 220px; }
+        .nav-item {
+            color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: var(--transition-smooth);
+            display: flex; align-items: center; width: 100%; padding: 0 25px; gap: 20px; overflow: hidden; white-space: nowrap;
         }
-        video { width: 100%; aspect-ratio: 16/9; display: block; background: #000; }
+        .nav-item span { font-size: 1.1rem; font-weight: 700; opacity: 0; transition: opacity 0.3s; }
+        .sidebar:hover .nav-item span { opacity: 1; }
+        .nav-item:hover, .nav-item.active { color: var(--accent-neon); transform: translateX(-5px); }
+
+        /* --- المحتوى الرئيسي --- */
+        .main-content { flex: 1; position: relative; overflow: hidden; }
+        .view-section {
+            position: absolute; inset: 0; padding: 40px; overflow-y: auto; overflow-x: hidden;
+            opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .view-section.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+        /* --- بطاقات وعناوين --- */
+        .hero-banner {
+            width: 100%; height: 35vh; border-radius: 20px; margin-bottom: 40px; position: relative; overflow: hidden;
+            background: url('https://images.unsplash.com/photo-1508344928928-7165b67de128?q=80&w=2000&auto=format&fit=crop') center/cover;
+            display: flex; flex-direction: column; justify-content: flex-end; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg-dark) 0%, transparent 80%); }
+        .hero-content { position: relative; z-index: 10; }
+        .hero-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 10px; }
         
-        /* واجهة معلومات القناة العلوية */
-        .player-header {
-            position: absolute; top: 0; left: 0; right: 0;
-            padding: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-            display: flex; justify-content: space-between; align-items: center;
-            opacity: 0; transition: opacity 0.3s; z-index: 10; pointer-events: none;
-        }
-        .player-wrapper:hover .player-header { opacity: 1; }
-        .playing-channel-name { font-size: 20px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .live-badge {
-            display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 14px;
-            background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(255,0,60,0.3);
-        }
-        .live-dot { width: 10px; height: 10px; background: var(--live-red); border-radius: 50%; box-shadow: 0 0 10px var(--live-red); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(0.95); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; } 100% { transform: scale(0.95); opacity: 1; } }
-
-        /* شريط التحكم السفلي */
-        .custom-controls {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
-            padding: 20px; display: flex; align-items: center; gap: 20px;
-            opacity: 0; transform: translateY(10px); transition: all 0.3s ease; z-index: 10;
-        }
-        .control-btn {
-            background: none; border: none; color: #fff; cursor: pointer;
-            transition: all 0.2s; display: flex; align-items: center; justify-content: center;
-        }
-        .control-btn:hover { color: var(--neon-cyan); transform: scale(1.1); text-shadow: 0 0 10px var(--neon-cyan); }
-        .control-btn svg { width: 28px; height: 28px; fill: currentColor; }
+        .section-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        .section-title::before { content: ''; width: 6px; height: 30px; background: var(--accent-neon); border-radius: 5px; }
         
-        /* قائمة الجودة */
-        .quality-container { position: relative; margin-right: auto; }
-        .quality-btn { font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 5px; }
-        .quality-menu {
-            position: absolute; bottom: 40px; right: 0;
-            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border); border-radius: 10px;
-            display: none; flex-direction: column; overflow: hidden; min-width: 100px;
-        }
-        .quality-menu.show { display: flex; }
-        .quality-menu button {
-            background: none; border: none; color: #fff; padding: 12px; cursor: pointer; transition: 0.2s;
-            border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; font-weight: 700;
-        }
-        .quality-menu button:hover, .quality-menu button.active { background: rgba(0, 240, 255, 0.15); color: var(--neon-cyan); }
-
-        /* --- شبكة القنوات --- */
-        .channels-section { max-width: 1400px; margin: 0 auto 50px; padding: 0 20px; }
-        .channels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
         
+        .category-card {
+            background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px;
+            height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; transition: var(--transition-smooth); backdrop-filter: blur(10px);
+        }
+        .category-card:hover { transform: translateY(-5px); border-color: var(--brand-primary); }
+        .cat-icon { font-size: 2rem; margin-bottom: 10px; background: linear-gradient(45deg, var(--brand-secondary), var(--accent-neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
         .channel-card {
-            background: var(--surface); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 15px; padding: 25px 20px; cursor: pointer; text-align: center;
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; overflow: hidden;
+            background: linear-gradient(145deg, rgba(30,30,40,0.8), rgba(15,15,20,0.9)); border-radius: 16px; padding: 20px;
+            cursor: pointer; transition: var(--transition-smooth); display: flex; flex-direction: column; align-items: center; gap: 10px;
+            border: 1px solid rgba(255,255,255,0.03); position: relative;
         }
-        .channel-card::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.1), transparent); transition: 0.5s;
+        .channel-card:hover { transform: translateY(-5px); border-color: var(--accent-neon); box-shadow: 0 10px 30px rgba(0, 242, 254, 0.15); }
+        .ch-logo {
+            width: 70px; height: 70px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-size: 1.8rem; font-weight: 900; background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
         }
-        .channel-card:hover { transform: translateY(-8px); border-color: var(--neon-cyan); box-shadow: 0 10px 30px rgba(0, 240, 255, 0.15); }
-        .channel-card:hover::after { left: 100%; }
-        .ch-name { font-size: 18px; font-weight: 700; position: relative; z-index: 2; }
+
+        /* =========================================
+           المشغل الاحترافي (Pro Video Player UI)
+           ========================================= */
+        #view-player { padding: 0; background: #000; display: flex; justify-content: center; align-items: center; }
+        .player-wrapper { position: relative; width: 100%; height: 100vh; overflow: hidden; background: #000; }
+        
+        video { width: 100%; height: 100%; object-fit: contain; cursor: pointer; }
+
+        /* الشاشة الزجاجية للتحكم (تظهر وتختفي) */
+        .player-controls-overlay {
+            position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between;
+            background: rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.4s ease; z-index: 10; pointer-events: none;
+        }
+        .player-wrapper.active-ui .player-controls-overlay { opacity: 1; pointer-events: auto; }
+        .player-wrapper.hide-cursor { cursor: none; }
+
+        /* مؤشر التحميل (Buffering) */
+        .buffering-spinner {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 3rem; color: var(--accent-neon); display: none; z-index: 5;
+        }
+        .player-wrapper.buffering .buffering-spinner { display: block; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* تأثير وسط الشاشة (Play/Pause Animation) */
+        .center-action-icon {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.5);
+            font-size: 4rem; color: rgba(255,255,255,0.8); background: rgba(0,0,0,0.5); width: 100px; height: 100px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 6;
+        }
+        .center-action-icon.animate { animation: popFade 0.6s ease forwards; }
+        @keyframes popFade { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); } }
+
+        /* الشريط العلوي */
+        .top-control-bar {
+            padding: 25px 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            display: flex; justify-content: space-between; align-items: flex-start; direction: rtl;
+        }
+        .btn-back-player {
+            background: rgba(255,255,255,0.1); border: none; color: white; width: 45px; height: 45px; border-radius: 50%;
+            font-size: 1.2rem; cursor: pointer; backdrop-filter: blur(5px); transition: 0.3s;
+        }
+        .btn-back-player:hover { background: var(--live-red); transform: scale(1.1); }
+        .channel-info-header { text-align: left; direction: ltr; }
+        .live-badge {
+            display: inline-flex; align-items: center; gap: 5px; background: rgba(255, 42, 42, 0.2); color: var(--live-red);
+            padding: 4px 10px; border-radius: 5px; font-weight: bold; font-size: 0.8rem; letter-spacing: 1px; border: 1px solid var(--live-red);
+        }
+        .live-dot { width: 8px; height: 8px; background: var(--live-red); border-radius: 50%; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .player-ch-name { font-size: 1.8rem; font-weight: 900; margin-top: 5px; text-shadow: 0 2px 10px #000; }
+
+        /* الشريط السفلي */
+        .bottom-control-bar {
+            padding: 20px 40px; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+            display: flex; flex-direction: column; gap: 15px; direction: ltr; /* اتجاه أزرار المشغل عالمي */
+        }
+        
+        /* شريط البث الوهمي (لإعطاء شعور احترافي) */
+        .live-timeline { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; position: relative; }
+        .live-timeline-progress { position: absolute; right: 0; top: 0; height: 100%; width: 100%; background: var(--live-red); border-radius: 2px; }
+
+        .controls-row { display: flex; justify-content: space-between; align-items: center; }
+        .controls-left, .controls-right { display: flex; align-items: center; gap: 20px; }
+        
+        .btn-control {
+            background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;
+            transition: var(--transition-smooth); display: flex; justify-content: center; align-items: center;
+        }
+        .btn-control:hover { color: var(--accent-neon); transform: scale(1.15); filter: drop-shadow(0 0 10px var(--accent-neon)); }
+
+        /* التحكم بالصوت */
+        .volume-container { display: flex; align-items: center; gap: 10px; }
+        .volume-slider {
+            width: 0; opacity: 0; transition: width 0.3s, opacity 0.3s; cursor: pointer;
+            -webkit-appearance: none; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;
+        }
+        .volume-container:hover .volume-slider { width: 80px; opacity: 1; }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--accent-neon); box-shadow: 0 0 10px var(--accent-neon);
+        }
+
+        .quality-badge { background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); }
+
+        /* استجابة الموبايل */
+        @media (max-width: 900px) {
+            #app-container { flex-direction: column-reverse; }
+            .sidebar { width: 100%; height: 60px; flex-direction: row; justify-content: space-around; padding: 0; }
+            .sidebar:hover { width: 100%; }
+            .nav-item span { display: none; }
+            .top-control-bar { padding: 15px 20px; }
+            .bottom-control-bar { padding: 15px 20px; }
+            .volume-slider { display: none; /* إخفاء سلايدر الصوت في الموبايل والاعتماد على أزرار الهاتف */ }
+            .btn-control { font-size: 1.2rem; }
+            .player-ch-name { font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="loader-screen">
-        <div class="spinner"></div>
-        <div class="loader-text">تهيئة النظام...</div>
+    <div id="loader">
+        <div class="logo-glow">SHABAKATY MAX</div>
+        <div style="color: var(--text-muted); font-size: 1rem;"><i class="fas fa-circle-notch fa-spin"></i> تهيئة النظام...</div>
     </div>
 
-    <header>
-        <div class="brand">SHABAKATY</div>
-    </header>
+    <div id="app-container">
+        <!-- الشريط الجانبي -->
+        <nav class="sidebar">
+            <div class="nav-item active" onclick="App.navigate('home')"><i class="fas fa-home"></i></div>
+            <div class="nav-item"><i class="fas fa-fire"></i></div>
+            <div class="nav-item" style="margin-top: auto;"><i class="fas fa-cog"></i></div>
+        </nav>
 
-    <div class="player-wrapper" id="player-container">
-        <div class="player-header">
-            <div class="playing-channel-name" id="current-channel">اختر قناة للبدء</div>
-            <div class="live-badge">
-                <div class="live-dot"></div> مباشر
-            </div>
-        </div>
-
-        <video id="video-player" preload="auto"></video>
-
-        <div class="custom-controls" id="custom-controls">
-            <button class="control-btn" id="play-pause-btn">
-                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <button class="control-btn" id="mute-btn">
-                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-            </button>
-            
-            <div class="quality-container">
-                <button class="control-btn quality-btn" id="quality-toggle">AUTO <svg width="16" height="16" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
-                <div class="quality-menu" id="quality-menu">
+        <main class="main-content">
+            <!-- الواجهة الرئيسية -->
+            <div id="view-home" class="view-section active">
+                <div class="hero-banner">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <h1 class="hero-title">منصة البث الأقوى</h1>
                     </div>
+                </div>
+                <h2 class="section-title">الباقات الرياضية</h2>
+                <div class="grid-container" id="categories-grid"></div>
             </div>
 
-            <button class="control-btn" id="fullscreen-btn">
-                <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-            </button>
-        </div>
-    </div>
+            <!-- واجهة القنوات -->
+            <div id="view-channels" class="view-section">
+                <button class="btn-control" style="background:rgba(255,255,255,0.1); padding:10px 20px; border-radius:8px; margin-bottom:20px; font-size:1rem;" onclick="App.navigate('home')">
+                    <i class="fas fa-arrow-right"></i> عودة
+                </button>
+                <h2 class="section-title" id="current-category-title">القنوات</h2>
+                <div class="grid-container" id="channels-grid"></div>
+            </div>
 
-    <div class="channels-section">
-        <div class="channels-grid" id="channels-grid"></div>
+            <!-- =========================================
+                 المشغل السينمائي الاحترافي (الجديد)
+                 ========================================= -->
+            <div id="view-player" class="view-section">
+                <div class="player-wrapper" id="player-wrapper">
+                    
+                    <video id="main-video" playsinline></video>
+                    
+                    <!-- مؤشر التحميل -->
+                    <i class="fas fa-circle-notch buffering-spinner" id="buffering-spinner"></i>
+                    
+                    <!-- تأثير النقر وسط الشاشة -->
+                    <div class="center-action-icon" id="center-icon">
+                        <i class="fas fa-play" id="center-icon-i"></i>
+                    </div>
+
+                    <!-- واجهة التحكم الشفافة -->
+                    <div class="player-controls-overlay">
+                        <!-- الشريط العلوي -->
+                        <div class="top-control-bar">
+                            <button class="btn-back-player" onclick="App.closePlayer()" title="إغلاق"><i class="fas fa-times"></i></button>
+                            <div class="channel-info-header">
+                                <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+                                <div class="player-ch-name" id="playing-channel-name">اسم القناة</div>
+                            </div>
+                        </div>
+
+                        <!-- الشريط السفلي -->
+                        <div class="bottom-control-bar">
+                            <div class="live-timeline"><div class="live-timeline-progress"></div></div>
+                            
+                            <div class="controls-row">
+                                <!-- يسار (Play, Volume) -->
+                                <div class="controls-left">
+                                    <button class="btn-control" id="btn-play-pause"><i class="fas fa-pause"></i></button>
+                                    
+                                    <div class="volume-container">
+                                        <button class="btn-control" id="btn-mute"><i class="fas fa-volume-up"></i></button>
+                                        <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.05" value="1">
+                                    </div>
+                                    
+                                    <span class="quality-badge">FHD</span>
+                                </div>
+                                
+                                <!-- يمين (PiP, Fullscreen) -->
+                                <div class="controls-right">
+                                    <button class="btn-control" id="btn-pip" title="صورة داخل صورة"><i class="fas fa-external-link-alt"></i></button>
+                                    <button class="btn-control" id="btn-fullscreen" title="ملء الشاشة"><i class="fas fa-expand"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
     <script>
-        const API_PROXY_URL = 'api.php'; // مسار ملف الـ PHP الذي قمت بإنشائه
-        const STREAM_BASE = 'http://marveltv.info:80/live/856107999101/576199010991/';
+        const App = {
+            config: {
+                username: "856107999101", password: "576199010991",
+                baseUrl: "http://marveltv.info/player_api.php", streamUrl: "http://marveltv.info:80/live/856107999101/576199010991/"
+            },
+            data: { categories: [], allStreams: [] },
+            activeHls: null, uiTimeout: null,
 
-        const video = document.getElementById('video-player');
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        const muteBtn = document.getElementById('mute-btn');
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        const qualityToggle = document.getElementById('quality-toggle');
-        const qualityMenu = document.getElementById('quality-menu');
-        const currentChannelText = document.getElementById('current-channel');
-        const playerContainer = document.getElementById('player-container');
-        
-        let hls = null;
-        let controlsTimeout;
+            ui: {
+                loader: document.getElementById('loader'),
+                views: document.querySelectorAll('.view-section'),
+                catGrid: document.getElementById('categories-grid'),
+                chGrid: document.getElementById('channels-grid'),
+                catTitle: document.getElementById('current-category-title'),
+            },
 
-        // تهيئة النظام
-        async function initApp() {
-            try {
-                const response = await fetch(API_PROXY_URL);
-                const data = await response.json();
-                
-                // إخفاء شاشة التحميل بسلاسة
-                document.getElementById('loader-screen').style.opacity = '0';
-                setTimeout(() => document.getElementById('loader-screen').style.display = 'none', 500);
+            player: {
+                wrapper: document.getElementById('player-wrapper'),
+                video: document.getElementById('main-video'),
+                title: document.getElementById('playing-channel-name'),
+                btnPlay: document.getElementById('btn-play-pause'),
+                btnMute: document.getElementById('btn-mute'),
+                volSlider: document.getElementById('volume-slider'),
+                btnFull: document.getElementById('btn-fullscreen'),
+                btnPip: document.getElementById('btn-pip'),
+                centerIcon: document.getElementById('center-icon'),
+                centerIconI: document.getElementById('center-icon-i')
+            },
 
-                if(data.error) throw new Error(data.error);
+            init: async function() {
+                this.setupPlayerControls();
+                await this.fetchData();
+            },
 
-                const beinChannels = data.filter(c => c.name && c.name.toLowerCase().includes('bein'));
-                renderChannels(beinChannels);
-
-            } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('channels-grid').innerHTML = `<div style="color:var(--live-red); text-align:center; grid-column: 1/-1; padding: 40px;">فشل الاتصال بملف api.php. تأكد من رفعه على الاستضافة.</div>`;
-                document.getElementById('loader-screen').style.display = 'none';
-            }
-        }
-
-        // عرض القنوات
-        function renderChannels(channels) {
-            const grid = document.getElementById('channels-grid');
-            grid.innerHTML = '';
-            channels.forEach(channel => {
-                const cleanName = channel.name.replace(/4K|FHD|HD|SD|MINI/gi, '').trim();
-                const card = document.createElement('div');
-                card.className = 'channel-card';
-                card.innerHTML = `<div class="ch-name">${cleanName}</div>`;
-                card.onclick = () => playChannel(channel.stream_id, cleanName);
-                grid.appendChild(card);
-            });
-        }
-
-        // تشغيل القناة
-        function playChannel(streamId, name) {
-            const streamUrl = `${STREAM_BASE}${streamId}.m3u8`;
-            currentChannelText.innerText = name;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            if (Hls.isSupported()) {
-                if (hls) hls.destroy();
-                hls = new Hls({
-                    maxBufferLength: 30,
-                    maxMaxBufferLength: 60,
-                    startLevel: -1 // Auto
-                });
-
-                hls.loadSource(streamUrl);
-                hls.attachMedia(video);
-                
-                hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-                    video.play();
-                    updatePlayPauseIcon();
-                    setupQualityMenu(data.levels);
-                });
-
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = streamUrl;
-                video.addEventListener('loadedmetadata', () => { video.play(); updatePlayPauseIcon(); });
-            }
-        }
-
-        // إعداد قائمة الجودة (تعتمد على وجود عدة جودات داخل الرابط إن وجدت)
-        function setupQualityMenu(levels) {
-            qualityMenu.innerHTML = `<button class="active" data-level="-1">AUTO</button>`;
-            if(levels.length > 1) {
-                levels.forEach((level, index) => {
-                    qualityMenu.innerHTML += `<button data-level="${index}">${level.height}p</button>`;
-                });
-            }
-            
-            qualityMenu.querySelectorAll('button').forEach(btn => {
-                btn.onclick = (e) => {
-                    const level = parseInt(e.target.getAttribute('data-level'));
-                    hls.currentLevel = level;
+            fetchData: async function() {
+                try {
+                    const q = `?username=${this.config.username}&password=${this.config.password}`;
+                    const [catRes, streamRes] = await Promise.all([
+                        fetch(`${this.config.baseUrl}${q}&action=get_live_categories`),
+                        fetch(`${this.config.baseUrl}${q}&action=get_live_streams`)
+                    ]);
+                    const rawCats = await catRes.json();
+                    this.data.allStreams = await streamRes.json();
                     
-                    qualityMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    qualityToggle.innerHTML = `${e.target.innerText} <svg width="16" height="16" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>`;
-                    qualityMenu.classList.remove('show');
+                    this.data.categories = rawCats.filter(cat => cat.category_name && cat.category_name.toUpperCase().includes('BEIN SPORTS')).sort((a,b)=>a.category_name.localeCompare(b.category_name));
+                    this.renderCategories();
+                    
+                    setTimeout(() => { this.ui.loader.style.opacity = '0'; setTimeout(() => this.ui.loader.style.display = 'none', 800); }, 500);
+                } catch (e) { alert("حدث خطأ في جلب البيانات."); }
+            },
+
+            navigate: function(viewId) {
+                this.ui.views.forEach(v => v.classList.remove('active'));
+                document.getElementById(`view-${viewId}`).classList.add('active');
+                if(viewId !== 'player') this.closePlayer(true); // تأكيد الإغلاق لو خرج
+            },
+
+            renderCategories: function() {
+                this.ui.catGrid.innerHTML = '';
+                this.data.categories.forEach(cat => {
+                    const c = document.createElement('div'); c.className = 'category-card';
+                    c.innerHTML = `<i class="fas fa-futbol cat-icon"></i><div style="font-weight:bold;">${cat.category_name}</div>`;
+                    c.onclick = () => { this.ui.catTitle.innerText = cat.category_name; this.renderChannels(cat.category_id); this.navigate('channels'); };
+                    this.ui.catGrid.appendChild(c);
+                });
+            },
+
+            renderChannels: function(catId) {
+                this.ui.chGrid.innerHTML = '';
+                const streams = this.data.allStreams.filter(s => s.category_id == catId);
+                streams.forEach(stream => {
+                    const chNum = (stream.name.match(/\d+/) || ['B'])[0];
+                    const c = document.createElement('div'); c.className = 'channel-card';
+                    c.innerHTML = `<div class="ch-logo">${chNum}</div><div style="font-weight:bold;">${stream.name}</div>`;
+                    c.onclick = () => this.openPlayer(stream.stream_id, stream.name);
+                    this.ui.chGrid.appendChild(c);
+                });
+            },
+
+            // --- منطق المشغل الاحترافي ---
+            openPlayer: function(streamId, name) {
+                this.player.title.innerText = name;
+                this.navigate('player');
+                const url = `${this.config.streamUrl}${streamId}.m3u8`;
+
+                if (this.activeHls) this.activeHls.destroy();
+                
+                if (Hls.isSupported()) {
+                    this.activeHls = new Hls({ maxBufferLength: 15, enableWorker: true });
+                    this.activeHls.loadSource(url);
+                    this.activeHls.attachMedia(this.player.video);
+                    this.activeHls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        this.player.video.play().catch(e=>console.log(e));
+                    });
+                    // معالجة الأخطاء لإظهار التحميل
+                    this.activeHls.on(Hls.Events.ERROR, (e, data) => {
+                        if (data.fatal) { this.activeHls.recoverMediaError(); }
+                    });
+                } else if (this.player.video.canPlayType('application/vnd.apple.mpegurl')) {
+                    this.player.video.src = url;
+                    this.player.video.play();
+                }
+                this.showPlayerUI();
+            },
+
+            closePlayer: function(fromNav = false) {
+                if(this.activeHls) this.activeHls.destroy();
+                this.player.video.pause();
+                this.player.video.src = '';
+                if(document.fullscreenElement) document.exitFullscreen();
+                if(!fromNav) this.navigate('channels');
+            },
+
+            setupPlayerControls: function() {
+                const vid = this.player.video;
+                const wrap = this.player.wrapper;
+
+                // 1. نظام إخفاء الواجهة الذكي (Smart UI Fade)
+                const resetUI = () => {
+                    this.showPlayerUI();
+                    clearTimeout(this.uiTimeout);
+                    this.uiTimeout = setTimeout(() => {
+                        if(!vid.paused) {
+                            wrap.classList.remove('active-ui');
+                            wrap.classList.add('hide-cursor');
+                        }
+                    }, 3000);
                 };
-            });
-        }
+                wrap.addEventListener('mousemove', resetUI);
+                wrap.addEventListener('touchstart', resetUI);
+                wrap.addEventListener('click', resetUI);
 
-        // ---- برمجة أزرار التحكم ----
-        
-        playPauseBtn.onclick = () => {
-            if (video.paused) video.play();
-            else video.pause();
-            updatePlayPauseIcon();
-        };
+                // 2. تحديثات حالة التشغيل (Play/Pause)
+                const togglePlay = () => { if(vid.paused) vid.play(); else vid.pause(); };
+                
+                vid.addEventListener('play', () => {
+                    this.player.btnPlay.innerHTML = '<i class="fas fa-pause"></i>';
+                    this.animateCenterIcon('fa-play');
+                });
+                vid.addEventListener('pause', () => {
+                    this.player.btnPlay.innerHTML = '<i class="fas fa-play"></i>';
+                    this.animateCenterIcon('fa-pause');
+                    this.showPlayerUI(); // إظهار الواجهة دائماً عند الإيقاف
+                });
 
-        function updatePlayPauseIcon() {
-            playPauseBtn.innerHTML = video.paused 
-                ? '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>' // Play
-                : '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause
-        }
+                this.player.btnPlay.onclick = (e) => { e.stopPropagation(); togglePlay(); };
+                vid.onclick = togglePlay; // تشغيل/إيقاف بالنقر على الشاشة
 
-        muteBtn.onclick = () => {
-            video.muted = !video.muted;
-            muteBtn.innerHTML = video.muted
-                ? '<svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>'
-                : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>';
-        };
+                // 3. حالة التحميل (Buffering)
+                vid.addEventListener('waiting', () => wrap.classList.add('buffering'));
+                vid.addEventListener('playing', () => wrap.classList.remove('buffering'));
+                vid.addEventListener('canplay', () => wrap.classList.remove('buffering'));
 
-        fullscreenBtn.onclick = () => {
-            if (!document.fullscreenElement) {
-                playerContainer.requestFullscreen().catch(err => console.log(err));
-            } else {
-                document.exitFullscreen();
+                // 4. التحكم بالصوت
+                this.player.btnMute.onclick = (e) => {
+                    e.stopPropagation();
+                    vid.muted = !vid.muted;
+                    this.updateVolumeIcon();
+                };
+                this.player.volSlider.oninput = (e) => {
+                    e.stopPropagation();
+                    vid.volume = e.target.value;
+                    vid.muted = (vid.volume == 0);
+                    this.updateVolumeIcon();
+                };
+                vid.addEventListener('volumechange', () => this.updateVolumeIcon());
+
+                // 5. ملء الشاشة (Fullscreen) - نقر مزدوج أو زر
+                const toggleFull = () => {
+                    if (!document.fullscreenElement) wrap.requestFullscreen().catch(e=>console.log(e));
+                    else document.exitFullscreen();
+                };
+                this.player.btnFull.onclick = (e) => { e.stopPropagation(); toggleFull(); };
+                vid.ondblclick = (e) => { e.stopPropagation(); toggleFull(); };
+                
+                document.addEventListener('fullscreenchange', () => {
+                    this.player.btnFull.innerHTML = document.fullscreenElement ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
+                });
+
+                // 6. صورة داخل صورة (PiP)
+                this.player.btnPip.onclick = async (e) => {
+                    e.stopPropagation();
+                    if (document.pictureInPictureElement) await document.exitPictureInPicture();
+                    else if (vid.requestPictureInPicture) await vid.requestPictureInPicture();
+                };
+            },
+
+            showPlayerUI: function() {
+                this.player.wrapper.classList.add('active-ui');
+                this.player.wrapper.classList.remove('hide-cursor');
+            },
+
+            updateVolumeIcon: function() {
+                const vol = this.player.video.muted ? 0 : this.player.video.volume;
+                this.player.volSlider.value = vol;
+                let icon = 'fa-volume-up';
+                if(vol === 0) icon = 'fa-volume-mute';
+                else if(vol < 0.5) icon = 'fa-volume-down';
+                this.player.btnMute.innerHTML = `<i class="fas ${icon}"></i>`;
+            },
+
+            animateCenterIcon: function(iconClass) {
+                const c = this.player.centerIcon;
+                this.player.centerIconI.className = `fas ${iconClass}`;
+                c.classList.remove('animate');
+                void c.offsetWidth; // Trigger reflow (إعادة تنشيط الأنيميشن)
+                c.classList.add('animate');
             }
         };
 
-        qualityToggle.onclick = () => qualityMenu.classList.toggle('show');
-
-        // إخفاء الأدوات عند عدم تحريك الماوس (لتجربة ملء الشاشة الخالصة)
-        playerContainer.addEventListener('mousemove', () => {
-            playerContainer.classList.add('active');
-            clearTimeout(controlsTimeout);
-            controlsTimeout = setTimeout(() => {
-                if(!video.paused) playerContainer.classList.remove('active');
-            }, 3000);
-        });
-
-        playerContainer.addEventListener('mouseleave', () => playerContainer.classList.remove('active'));
-
-        // بدء التشغيل
-        document.addEventListener('DOMContentLoaded', initApp);
+        document.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
 </html>
