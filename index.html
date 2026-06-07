@@ -3,512 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS المجمع - الإدارة الذكية</title>
+    <title>Shabakaty - Premium Player</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
-        /* المتغيرات الأساسية لدعم الـ Dark/Light Themes وتصميم الـ Modern/Futuristic */
         :root {
-            --bg-body: #060b13;
-            --bg-glass: rgba(15, 23, 42, 0.7);
-            --border-glass: rgba(6, 182, 212, 0.15);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --primary: #06b6d4;
-            --secondary: #3b82f6;
-            --accent: #a855f7;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --shadow-glass: 0 10px 40px rgba(0, 0, 0, 0.4);
-            --font-main: 'Cairo', sans-serif;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-base: #050507;
+            --surface: rgba(20, 20, 25, 0.7);
+            --neon-cyan: #00f0ff;
+            --neon-blue: #0051ff;
+            --live-red: #ff003c;
+            --text-main: #ffffff;
+            --glass-border: rgba(0, 240, 255, 0.15);
         }
 
-        [data-theme="light"] {
-            --bg-body: #f1f5f9;
-            --bg-glass: rgba(255, 255, 255, 0.85);
-            --border-glass: rgba(0, 0, 0, 0.1);
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --shadow-glass: 0 10px 30px rgba(0, 0, 0, 0.05);
-            --primary: #0284c7;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: radial-gradient(circle at 50% 0%, #11111a 0%, #050507 70%);
+            color: var(--text-main);
+            min-height: 100vh;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); outline: none; }
-        
-        body { 
-            background-color: var(--bg-body); color: var(--text-main); 
-            background-image: radial-gradient(at 0% 0%, rgba(6,182,212,0.1) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(168,85,247,0.08) 0, transparent 50%);
-            background-attachment: fixed; transition: var(--transition);
+        /* --- شاشة التحميل الفعلية --- */
+        #loader-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-base);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; transition: opacity 0.5s ease;
         }
-
-        /* حاويات الزجاج المتقدمة */
-        .glass-panel {
-            background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--border-glass); border-radius: 20px; box-shadow: var(--shadow-glass);
-            padding: 24px; transition: var(--transition);
+        .spinner {
+            width: 60px; height: 60px;
+            border: 4px solid rgba(0, 240, 255, 0.1);
+            border-top-color: var(--neon-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text { margin-top: 20px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-cyan); }
 
-        .layout-grid { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+        /* --- الهيدر --- */
+        header {
+            padding: 20px 40px;
+            background: rgba(5, 5, 7, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .brand { font-size: 26px; font-weight: 900; letter-spacing: 3px; color: #fff; text-shadow: 0 0 15px var(--neon-blue); }
 
-        /* القائمة الجانبية */
-        aside { border-left: 1px solid var(--border-glass); padding: 30px 20px; display: flex; flex-direction: column; gap: 30px; background: rgba(0,0,0,0.1); }
-        .brand h1 { font-size: 1.5rem; font-weight: 900; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* --- المشغل الاحترافي المخصص --- */
+        .player-wrapper {
+            max-width: 1200px; margin: 30px auto;
+            position: relative; border-radius: 20px; overflow: hidden;
+            background: #000; box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0, 240, 255, 0.2);
+            border: 1px solid var(--glass-border);
+        }
+        .player-wrapper:hover .custom-controls, .player-wrapper.active .custom-controls {
+            opacity: 1; transform: translateY(0);
+        }
+        video { width: 100%; aspect-ratio: 16/9; display: block; background: #000; }
         
-        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-        .nav-links a { display: flex; align-items: center; gap: 12px; padding: 14px 16px; color: var(--text-muted); text-decoration: none; border-radius: 12px; font-weight: 600; transition: var(--transition); }
-        .nav-links a:hover, .nav-links a.active { background: rgba(6, 182, 212, 0.1); color: var(--primary); transform: translateX(-5px); }
+        /* واجهة معلومات القناة العلوية */
+        .player-header {
+            position: absolute; top: 0; left: 0; right: 0;
+            padding: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            display: flex; justify-content: space-between; align-items: center;
+            opacity: 0; transition: opacity 0.3s; z-index: 10; pointer-events: none;
+        }
+        .player-wrapper:hover .player-header { opacity: 1; }
+        .playing-channel-name { font-size: 20px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .live-badge {
+            display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 14px;
+            background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(255,0,60,0.3);
+        }
+        .live-dot { width: 10px; height: 10px; background: var(--live-red); border-radius: 50%; box-shadow: 0 0 10px var(--live-red); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; } 100% { transform: scale(0.95); opacity: 1; } }
 
-        /* محدد الشهر الدائري */
-        .month-selector { margin-top: 10px; }
-        .month-selector select { width: 100%; background: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-glass); padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-
-        /* لوحة المشغل الذكية */
-        .operator-card { margin-top: auto; padding: 20px; background: linear-gradient(145deg, rgba(6,182,212,0.1), rgba(15,23,42,0)); border: 1px solid var(--border-glass); border-radius: 16px; position: relative; overflow: hidden; }
-        .operator-card::before { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: var(--primary); }
-        .operator-card h4 { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .operator-card h2 { font-size: 1.2rem; margin: 8px 0; color: var(--text-main); }
-        .operator-card p { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; }
-
-        /* الشاشة الرئيسية */
-        main { padding: 40px; display: flex; flex-direction: column; gap: 25px; max-width: 1600px; width: 100%; margin: 0 auto; }
+        /* شريط التحكم السفلي */
+        .custom-controls {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+            padding: 20px; display: flex; align-items: center; gap: 20px;
+            opacity: 0; transform: translateY(10px); transition: all 0.3s ease; z-index: 10;
+        }
+        .control-btn {
+            background: none; border: none; color: #fff; cursor: pointer;
+            transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+        }
+        .control-btn:hover { color: var(--neon-cyan); transform: scale(1.1); text-shadow: 0 0 10px var(--neon-cyan); }
+        .control-btn svg { width: 28px; height: 28px; fill: currentColor; }
         
-        .top-bar { display: flex; justify-content: space-between; align-items: center; }
-        .search-box { position: relative; width: 350px; }
-        .search-box i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-        .search-box input { width: 100%; background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 12px 40px 12px 15px; border-radius: 20px; color: var(--text-main); transition: var(--transition); }
-        .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); }
+        /* قائمة الجودة */
+        .quality-container { position: relative; margin-right: auto; }
+        .quality-btn { font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 5px; }
+        .quality-menu {
+            position: absolute; bottom: 40px; right: 0;
+            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); border-radius: 10px;
+            display: none; flex-direction: column; overflow: hidden; min-width: 100px;
+        }
+        .quality-menu.show { display: flex; }
+        .quality-menu button {
+            background: none; border: none; color: #fff; padding: 12px; cursor: pointer; transition: 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; font-weight: 700;
+        }
+        .quality-menu button:hover, .quality-menu button.active { background: rgba(0, 240, 255, 0.15); color: var(--neon-cyan); }
+
+        /* --- شبكة القنوات --- */
+        .channels-section { max-width: 1400px; margin: 0 auto 50px; padding: 0 20px; }
+        .channels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
         
-        .header-actions { display: flex; gap: 15px; }
-        .btn-icon { background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main); width: 45px; height: 45px; border-radius: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: var(--transition); }
-        .btn-icon:hover { background: var(--primary); color: #fff; border-color: transparent; transform: translateY(-3px); }
-
-        /* كروت الإحصائيات */
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-        .kpi-card { display: flex; align-items: center; justify-content: space-between; }
-        .kpi-info h3 { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; }
-        .kpi-info .val { font-size: 1.8rem; font-weight: 900; }
-        .kpi-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; }
-        .bg-p { background: rgba(6,182,212,0.1); color: var(--primary); }
-        .bg-s { background: rgba(16,185,129,0.1); color: var(--success); }
-        .bg-d { background: rgba(239,68,68,0.1); color: var(--danger); }
-
-        /* قسم الذكاء الاصطناعي والرسوم */
-        .analytics-row { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-        .ai-assistant { border-right: 4px solid var(--accent); background: linear-gradient(90deg, rgba(168,85,247,0.05), transparent); }
-        .ai-assistant p { font-size: 0.95rem; line-height: 1.6; margin-top: 10px; color: var(--text-main); }
-        .ai-badge { display: inline-block; padding: 4px 10px; background: rgba(168,85,247,0.2); color: var(--accent); border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
-
-        /* جدول الدفوعات التفاعلي */
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: right; }
-        th { padding: 15px; color: var(--text-muted); font-size: 0.85rem; border-bottom: 1px solid var(--border-glass); }
-        td { padding: 15px; border-bottom: 1px solid var(--border-glass); font-weight: 600; font-size: 0.95rem; transition: var(--transition); }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-
-        .status-badge { padding: 6px 16px; border-radius: 30px; font-size: 0.8rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: var(--transition); user-select: none; border: 1px solid transparent; }
-        .status-badge:hover { transform: scale(1.05); }
-        .status-paid { background: rgba(16,185,129,0.15); color: var(--success); border-color: rgba(16,185,129,0.3); }
-        .status-unpaid { background: rgba(239,68,68,0.15); color: var(--danger); border-color: rgba(239,68,68,0.3); }
-
-        /* الإشعارات Toast */
-        #toast-container { position: fixed; bottom: 30px; left: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; }
-        .toast { background: var(--bg-glass); backdrop-filter: blur(10px); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.4s ease-out forwards; }
-        .toast.success i { color: var(--success); }
-        .toast.warning i { color: var(--warning); }
-        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
-
-        /* نافذة السجلات Logs Modal */
-        #logs-modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .logs-box { background: var(--bg-body); border: 1px solid var(--border-glass); width: 600px; max-height: 80vh; border-radius: 20px; padding: 25px; overflow-y: auto; }
-        .log-item { padding: 12px 0; border-bottom: 1px solid var(--border-glass); font-size: 0.85rem; color: var(--text-muted); }
-        .log-item strong { color: var(--text-main); }
-        .close-btn { float: left; background: var(--danger); color: #fff; border: none; padding: 5px 10px; border-radius: 8px; cursor: pointer; }
-
-        @media print { body * { visibility: hidden; } .table-container, .table-container * { visibility: visible; } .table-container { position: absolute; left: 0; top: 0; width: 100%; } }
-        @media (max-width: 900px) { .layout-grid { grid-template-columns: 1fr; } aside { border-left: none; border-bottom: 1px solid var(--border-glass); } .analytics-row { grid-template-columns: 1fr; } }
+        .channel-card {
+            background: var(--surface); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 15px; padding: 25px 20px; cursor: pointer; text-align: center;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; overflow: hidden;
+        }
+        .channel-card::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.1), transparent); transition: 0.5s;
+        }
+        .channel-card:hover { transform: translateY(-8px); border-color: var(--neon-cyan); box-shadow: 0 10px 30px rgba(0, 240, 255, 0.15); }
+        .channel-card:hover::after { left: 100%; }
+        .ch-name { font-size: 18px; font-weight: 700; position: relative; z-index: 2; }
     </style>
 </head>
 <body>
 
-    <div class="layout-grid">
-        <aside>
-            <div class="brand">
-                <h1>مجمع البوشهاب</h1>
-                <p style="color:var(--text-muted); font-size:0.8rem; margin-top:5px;">SaaS الإدارة المركزية المتطورة</p>
-            </div>
-            
-            <div class="month-selector">
-                <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; display: block;">سجل بيانات الدفع لـ:</label>
-                <select id="monthSelect" onchange="changeMonth()">
-                    <option value="7">الشهر السابع (يوليو)</option>
-                    <option value="8">الشهر الثامن (أغسطس)</option>
-                    <option value="9">الشهر التاسع (سبتمبر)</option>
-                    <option value="10">الشهر العاشر (أكتوبر)</option>
-                    <option value="11">الشهر الحادي عشر (نوفمبر)</option>
-                    <option value="12">الشهر الثاني عشر (ديسمبر)</option>
-                </select>
-            </div>
-
-            <ul class="nav-links">
-                <li><a href="#" class="active"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم الذكية</a></li>
-                <li><a href="#" onclick="showLogs()"><i class="fa-solid fa-clipboard-list"></i> سجل العمليات (Logs)</a></li>
-                <li><a href="#" onclick="exportExcel()"><i class="fa-solid fa-file-excel"></i> تصدير البيانات (Excel)</a></li>
-                <li><a href="#" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> استخراج تقرير PDF</a></li>
-            </ul>
-
-            <div class="operator-card">
-                <h4><i class="fa-solid fa-user-tie"></i> المشغل الميداني النشط</h4>
-                <h2 id="currentOpName">--</h2>
-                <p><span>بداية:</span> <strong id="opStart">--</strong></p>
-                <p><span>نهاية:</span> <strong id="opEnd">--</strong></p>
-            </div>
-        </aside>
-
-        <main>
-            <div class="top-bar">
-                <div class="search-box">
-                    <i class="fa-solid fa-search"></i>
-                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="ابحث عن رقم الدار أو اسم المشترك...">
-                </div>
-                <div class="header-actions">
-                    <button class="btn-icon" onclick="toggleTheme()" title="تبديل الإضاءة"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
-                    <button class="btn-icon" onclick="resetSystemData()" title="تفريغ النظام وإعادة ضبط المصنع"><i class="fa-solid fa-rotate-right"></i></button>
-                </div>
-            </div>
-
-            <div class="kpi-grid">
-                <div class="glass-panel kpi-card">
-                    <div class="kpi-info">
-                        <h3>إجمالي الدور (الشهر الحالي)</h3>
-                        <div class="val" id="kpiTotal">0</div>
-                    </div>
-                    <div class="kpi-icon bg-p"><i class="fa-solid fa-house"></i></div>
-                </div>
-                <div class="glass-panel kpi-card">
-                    <div class="kpi-info">
-                        <h3>تم السداد (محصل)</h3>
-                        <div class="val" id="kpiPaid" style="color: var(--success);">0</div>
-                    </div>
-                    <div class="kpi-icon bg-s"><i class="fa-solid fa-check"></i></div>
-                </div>
-                <div class="glass-panel kpi-card">
-                    <div class="kpi-info">
-                        <h3>لم يسدد (ديون)</h3>
-                        <div class="val" id="kpiUnpaid" style="color: var(--danger);">0</div>
-                    </div>
-                    <div class="kpi-icon bg-d"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                </div>
-            </div>
-
-            <div class="analytics-row">
-                <div class="glass-panel ai-assistant">
-                    <span class="ai-badge"><i class="fa-solid fa-robot"></i> التحليل الآلي للذكاء الاصطناعي (AI)</span>
-                    <h3 style="margin-bottom: 10px;">تقرير الأداء الفوري للشهر <span id="aiMonthText">7</span></h3>
-                    <p id="aiReportText">جاري معالجة بيانات السداد والمشغلين...</p>
-                    <div style="margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.85rem; color: var(--text-muted);">
-                        <i class="fa-solid fa-lightbulb" style="color: var(--warning);"></i> <span id="aiSuggestion">توصية النظام</span>
-                    </div>
-                </div>
-                <div class="glass-panel">
-                    <h3 style="font-size: 1rem; margin-bottom: 15px; text-align: center;">نسبة التحصيل</h3>
-                    <div style="height: 180px; position: relative;"><canvas id="chartPie"></canvas></div>
-                </div>
-            </div>
-
-            <div class="glass-panel">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
-                    <h3 style="font-size: 1.1rem;"><i class="fa-solid fa-list-check" style="color: var(--primary);"></i> جدول الدفوعات النشط (الشهر <span id="tableMonthTitle">7</span>)</h3>
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">انقر على حالة الدفع لتعديلها فورياً</span>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>التسلسل</th>
-                                <th>اسم الدار / المشترك</th>
-                                <th>قيمة الاشتراك</th>
-                                <th>حالة الدفع (الشهر المحدد)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
+    <div id="loader-screen">
+        <div class="spinner"></div>
+        <div class="loader-text">تهيئة النظام...</div>
     </div>
 
-    <div id="logs-modal">
-        <div class="logs-box">
-            <button class="close-btn" onclick="document.getElementById('logs-modal').style.display='none'">إغلاق</button>
-            <h2 style="margin-bottom: 20px; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px;">سجل العمليات الأمني (Audit Logs)</h2>
-            <div id="logsContainer"></div>
+    <header>
+        <div class="brand">SHABAKATY</div>
+    </header>
+
+    <div class="player-wrapper" id="player-container">
+        <div class="player-header">
+            <div class="playing-channel-name" id="current-channel">اختر قناة للبدء</div>
+            <div class="live-badge">
+                <div class="live-dot"></div> مباشر
+            </div>
+        </div>
+
+        <video id="video-player" preload="auto"></video>
+
+        <div class="custom-controls" id="custom-controls">
+            <button class="control-btn" id="play-pause-btn">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="control-btn" id="mute-btn">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            </button>
+            
+            <div class="quality-container">
+                <button class="control-btn quality-btn" id="quality-toggle">AUTO <svg width="16" height="16" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
+                <div class="quality-menu" id="quality-menu">
+                    </div>
+            </div>
+
+            <button class="control-btn" id="fullscreen-btn">
+                <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+            </button>
         </div>
     </div>
 
-    <div id="toast-container"></div>
+    <div class="channels-section">
+        <div class="channels-grid" id="channels-grid"></div>
+    </div>
 
     <script>
-        // 1. نظام الدورة الزمنية المستقر (Rotation Engine)
-        // توجيه الخوارزمية حسب الطلب: (احمد يبدأ غداً 31 مايو 2026. مهند اليوم 30 مايو هو آخر يوم له)
-        const ANCHOR_DATE = new Date('2026-05-31T00:00:00'); // نقطة انطلاق احمد (دورة جديدة)
-        const OPERATORS = [
-            "احمد ماجد عبدالله", // Index 0 (يبدأ 31/5)
-            "محمد شعلان ضاري",   // Index 1 (يبدأ 3/6)
-            "حمزه مجيد عبدالله", // Index 2 (يبدأ 6/6)
-            "مهند عدنان ضاري"    // Index 3 (يبدأ 9/6، دورته السابقة كانت 28، 29، 30 مايو)
-        ];
+        const API_PROXY_URL = 'api.php'; // مسار ملف الـ PHP الذي قمت بإنشائه
+        const STREAM_BASE = 'http://marveltv.info:80/live/856107999101/576199010991/';
 
-        let activeOp = "";
-        let currentMonth = "7";
-        let db = { houses: [], logs: [] };
-        const DB_KEY = "SaaS_AlBushehab_v2";
-
-        const RAW_DATA = [
-            "سامي نافع", "سامي خليفة", "سلام صباح", "محمد سليمان", "شهاب حامد", "حمادة خليفة", "احمد خليفة", "صباح خلف", "شهاب خلف", "عبدالله خلف", "علي خلف", "صالح علي", "علي رشيد",
-            "مجيد خلف", "فؤاد دحام", "عماد دحام", "قاسم طعمه", "عصام طعمه", "جاسم طعمه", "شاكر محمود", "يوسف خلف", "عارف جاسم", "محمد جاسم", "حسن محمد فيصل", "طارق فهد", "محمد طارق",
-            "اياد طارق", "سعدون الفهد", "سعود فهد", "علي حامد", "محمد حامد", "وسام حامد", "ماهر ناجي", "مفيد حميد", "احمد مفيد", "عمر نافع", "نافع محمد", 
-            "سمير مجيد", "سمير سالم", "محمد حميد ضاري", "محمد حسين", "صباح ذياب", "حسين خليفة", "ساجر صبار", "ثامر بزيغ", "ناصر بزيغ", "عزيز فريح", "سعد خميس", "مضحي خميس", "مزهر صبار",
-            "وعد نجمان", "قيس صبار", "حميد عواد", "محمد عواد", "شاكر حامد", "خليل وكالة", "منعم حميد عواد", "اثير ابراهيم", "ابراهيم حسون", "عدنان حسون", "جميل حسون", "حميد حسون", "زهير خليل حسون",
-            "خليل حسون", "سمير حميد", "امير حميد", "منير حميد", "عماد طارق", "محمد حسن", "محمد شهاب مصلح", "عمر خالد", "احمد عبيد خلف", "رحمن عبيد", "صلاح خضير",
-            "محمد ابراهيم", "حسام جاسم", "جسام محمد حديد", "محمد جمعة", "انور صباح", "رعد فهد", "فارس اسماعيل"
-        ];
-
-        let myChart = null;
+        const video = document.getElementById('video-player');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const muteBtn = document.getElementById('mute-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const qualityToggle = document.getElementById('quality-toggle');
+        const qualityMenu = document.getElementById('quality-menu');
+        const currentChannelText = document.getElementById('current-channel');
+        const playerContainer = document.getElementById('player-container');
+        
+        let hls = null;
+        let controlsTimeout;
 
         // تهيئة النظام
-        function initApp() {
-            calculateRotation();
-            
-            const savedData = localStorage.getItem(DB_KEY);
-            if (savedData) {
-                db = JSON.parse(savedData);
-            } else {
-                buildInitialDB();
-            }
-            
-            // تهيئة الوضع الليلي/النهاري
-            if(localStorage.getItem('saas_theme') === 'light') {
-                document.body.setAttribute('data-theme', 'light');
-                document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
-            }
+        async function initApp() {
+            try {
+                const response = await fetch(API_PROXY_URL);
+                const data = await response.json();
+                
+                // إخفاء شاشة التحميل بسلاسة
+                document.getElementById('loader-screen').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader-screen').style.display = 'none', 500);
 
-            renderUI();
-            
-            // تنبيه الدخول الافتتاحي
-            setTimeout(() => showToast(`تم تسجيل الدخول. المشغل الحالي: ${activeOp}`, 'success'), 1000);
+                if(data.error) throw new Error(data.error);
+
+                const beinChannels = data.filter(c => c.name && c.name.toLowerCase().includes('bein'));
+                renderChannels(beinChannels);
+
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('channels-grid').innerHTML = `<div style="color:var(--live-red); text-align:center; grid-column: 1/-1; padding: 40px;">فشل الاتصال بملف api.php. تأكد من رفعه على الاستضافة.</div>`;
+                document.getElementById('loader-screen').style.display = 'none';
+            }
         }
 
-        // بناء قاعدة البيانات المستقلة للشهور
-        function buildInitialDB() {
-            db.houses = [];
-            db.logs = [];
-            let idCounter = 1;
-            RAW_DATA.forEach(name => {
-                if(idCounter === 38) idCounter = 40;
-                if(idCounter === 74) idCounter = 76;
-                if(idCounter === 84) idCounter = 85;
-                
-                db.houses.push({
-                    id: idCounter, name: name, 
-                    payments: { "7": false, "8": false, "9": false, "10": false, "11": false, "12": false }
+        // عرض القنوات
+        function renderChannels(channels) {
+            const grid = document.getElementById('channels-grid');
+            grid.innerHTML = '';
+            channels.forEach(channel => {
+                const cleanName = channel.name.replace(/4K|FHD|HD|SD|MINI/gi, '').trim();
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                card.innerHTML = `<div class="ch-name">${cleanName}</div>`;
+                card.onclick = () => playChannel(channel.stream_id, cleanName);
+                grid.appendChild(card);
+            });
+        }
+
+        // تشغيل القناة
+        function playChannel(streamId, name) {
+            const streamUrl = `${STREAM_BASE}${streamId}.m3u8`;
+            currentChannelText.innerText = name;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (Hls.isSupported()) {
+                if (hls) hls.destroy();
+                hls = new Hls({
+                    maxBufferLength: 30,
+                    maxMaxBufferLength: 60,
+                    startLevel: -1 // Auto
                 });
-                idCounter++;
-            });
-            saveDB();
-        }
 
-        function saveDB() { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
-
-        // الخوارزمية الرياضية لحساب مناوبات المشغلين الميدانية بدقة
-        function calculateRotation() {
-            const now = new Date();
-            // تصحيح فوارق التوقيت لضمان التبديل بمنتصف الليل
-            const nowUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-            const anchorUTC = Date.UTC(ANCHOR_DATE.getFullYear(), ANCHOR_DATE.getMonth(), ANCHOR_DATE.getDate());
-            
-            const msPerDay = 1000 * 60 * 60 * 24;
-            let diffDays = Math.floor((nowUTC - anchorUTC) / msPerDay);
-            
-            let cycleDay = ((diffDays % 12) + 12) % 12; 
-            let opIndex = Math.floor(cycleDay / 3);
-            activeOp = OPERATORS[opIndex];
-
-            let daysIntoShift = cycleDay % 3;
-            let shiftStartDays = diffDays - daysIntoShift;
-            
-            let startDate = new Date(anchorUTC + (shiftStartDays * msPerDay));
-            let endDate = new Date(startDate.getTime() + (2 * msPerDay)); 
-
-            document.getElementById('currentOpName').innerText = activeOp;
-            document.getElementById('opStart').innerText = startDate.toLocaleDateString('ar-IQ');
-            document.getElementById('opEnd').innerText = endDate.toLocaleDateString('ar-IQ');
-        }
-
-        function changeMonth() {
-            currentMonth = document.getElementById('monthSelect').value;
-            document.getElementById('tableMonthTitle').innerText = currentMonth;
-            document.getElementById('aiMonthText').innerText = currentMonth;
-            renderUI();
-        }
-
-        // رندرة وبناء الواجهة التفاعلية
-        function renderUI() {
-            const tbody = document.getElementById('dataTableBody');
-            tbody.innerHTML = '';
-            
-            let paidCount = 0;
-            let totalCount = db.houses.length;
-
-            db.houses.forEach(h => {
-                const isPaid = h.payments[currentMonth];
-                if (isPaid) paidCount++;
-
-                const tr = document.createElement('tr');
-                tr.className = 'table-row';
-                const badgeClass = isPaid ? 'status-paid' : 'status-unpaid';
-                const badgeIcon = isPaid ? '<i class="fa-solid fa-check"></i> تم السداد' : '<i class="fa-solid fa-xmark"></i> لم يسدد';
+                hls.loadSource(streamUrl);
+                hls.attachMedia(video);
                 
-                tr.innerHTML = `
-                    <td style="color:var(--primary);"># ${h.id}</td>
-                    <td>${h.name}</td>
-                    <td>5,000 د.ع</td>
-                    <td><div class="status-badge ${badgeClass}" onclick="togglePayment(${h.id}, '${h.name}')">${badgeIcon}</div></td>
-                `;
-                tbody.appendChild(tr);
+                hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+                    video.play();
+                    updatePlayPauseIcon();
+                    setupQualityMenu(data.levels);
+                });
+
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = streamUrl;
+                video.addEventListener('loadedmetadata', () => { video.play(); updatePlayPauseIcon(); });
+            }
+        }
+
+        // إعداد قائمة الجودة (تعتمد على وجود عدة جودات داخل الرابط إن وجدت)
+        function setupQualityMenu(levels) {
+            qualityMenu.innerHTML = `<button class="active" data-level="-1">AUTO</button>`;
+            if(levels.length > 1) {
+                levels.forEach((level, index) => {
+                    qualityMenu.innerHTML += `<button data-level="${index}">${level.height}p</button>`;
+                });
+            }
+            
+            qualityMenu.querySelectorAll('button').forEach(btn => {
+                btn.onclick = (e) => {
+                    const level = parseInt(e.target.getAttribute('data-level'));
+                    hls.currentLevel = level;
+                    
+                    qualityMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    qualityToggle.innerHTML = `${e.target.innerText} <svg width="16" height="16" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>`;
+                    qualityMenu.classList.remove('show');
+                };
             });
-
-            document.getElementById('kpiTotal').innerText = totalCount;
-            document.getElementById('kpiPaid').innerText = paidCount;
-            document.getElementById('kpiUnpaid').innerText = totalCount - paidCount;
-
-            updateChart(paidCount, totalCount - paidCount);
-            runAIAssistant(paidCount, totalCount);
-            filterTable(); // تطبيق الفلتر إن وجد
         }
 
-        // تعديل حالة الدفع اللحظية وتسجيل السجل الأمني
-        function togglePayment(id, name) {
-            const house = db.houses.find(h => h.id === id);
-            const newState = !house.payments[currentMonth];
-            house.payments[currentMonth] = newState;
-            
-            const statusText = newState ? "تم السداد" : "إلغاء السداد";
-            addLog(`قام المشغل [${activeOp}] بتغيير حالة المشترك "${name}" لشهر ${currentMonth} إلى: ${statusText}`);
-            
-            saveDB();
-            renderUI();
-            
-            showToast(`تم تحديث حالة الدار ${id} بنجاح`, newState ? 'success' : 'warning');
+        // ---- برمجة أزرار التحكم ----
+        
+        playPauseBtn.onclick = () => {
+            if (video.paused) video.play();
+            else video.pause();
+            updatePlayPauseIcon();
+        };
+
+        function updatePlayPauseIcon() {
+            playPauseBtn.innerHTML = video.paused 
+                ? '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>' // Play
+                : '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause
         }
 
-        // محرك الذكاء الاصطناعي لتحليل البيانات
-        function runAIAssistant(paid, total) {
-            const percentage = total === 0 ? 0 : Math.round((paid / total) * 100);
-            const textEl = document.getElementById('aiReportText');
-            const sugEl = document.getElementById('aiSuggestion');
+        muteBtn.onclick = () => {
+            video.muted = !video.muted;
+            muteBtn.innerHTML = video.muted
+                ? '<svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>'
+                : '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>';
+        };
 
-            if (percentage >= 80) {
-                textEl.innerHTML = `نسبة التحصيل ممتازة <strong>(${percentage}%)</strong>. الإيرادات مستقرة بفضل جهود فريق المشغلين.`;
-                textEl.style.color = "var(--success)";
-                sugEl.innerText = "اقتراح: يمكن أرشفة الشهر كـ 'مكتمل' والتركيز الميداني على تجهيز الجباية للشهر الذي يليه.";
-            } else if (percentage >= 40) {
-                textEl.innerHTML = `نسبة التحصيل متوسطة <strong>(${percentage}%)</strong>. هناك تقدم لكن يوجد بطء في سداد بعض القطاعات.`;
-                textEl.style.color = "var(--warning)";
-                sugEl.innerText = `اقتراح: توجيه المشغل الحالي (${activeOp}) لإجراء جولة إضافية في المناطق المتأخرة للوصول إلى المستهدف.`;
+        fullscreenBtn.onclick = () => {
+            if (!document.fullscreenElement) {
+                playerContainer.requestFullscreen().catch(err => console.log(err));
             } else {
-                textEl.innerHTML = `نسبة التحصيل منخفضة جداً وخطرة <strong>(${percentage}%)</strong>. تدفق الإيرادات ضعيف جداً هذا الشهر.`;
-                textEl.style.color = "var(--danger)";
-                sugEl.innerText = "اقتراح تنفيذي عاجل: إصدار إشعارات فورية ورقية للمشتركين المتأخرين لتحصيل الديون وتفادي التراكم.";
+                document.exitFullscreen();
             }
-        }
+        };
 
-        function updateChart(paid, unpaid) {
-            const ctx = document.getElementById('chartPie').getContext('2d');
-            if(myChart) myChart.destroy();
-            
-            const isLight = document.body.getAttribute('data-theme') === 'light';
-            Chart.defaults.color = isLight ? '#64748b' : '#94a3b8';
-            Chart.defaults.font.family = 'Cairo';
+        qualityToggle.onclick = () => qualityMenu.classList.toggle('show');
 
-            myChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['مسدد', 'ديون'],
-                    datasets: [{ data: [paid, unpaid], backgroundColor: ['#10b981', '#ef4444'], borderWidth: 0 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right' } } }
-            });
-        }
+        // إخفاء الأدوات عند عدم تحريك الماوس (لتجربة ملء الشاشة الخالصة)
+        playerContainer.addEventListener('mousemove', () => {
+            playerContainer.classList.add('active');
+            clearTimeout(controlsTimeout);
+            controlsTimeout = setTimeout(() => {
+                if(!video.paused) playerContainer.classList.remove('active');
+            }, 3000);
+        });
 
-        function filterTable() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('.table-row');
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(query) ? '' : 'none';
-            });
-        }
+        playerContainer.addEventListener('mouseleave', () => playerContainer.classList.remove('active'));
 
-        // نظام السجلات والتوثيق المرجعي
-        function addLog(msg) {
-            const now = new Date().toLocaleString('ar-IQ');
-            db.logs.unshift({ time: now, msg: msg });
-            if(db.logs.length > 50) db.logs.pop(); // الاحتفاظ بآخر 50 عملية لعدم إثقال الذاكرة
-        }
-
-        function showLogs() {
-            const container = document.getElementById('logsContainer');
-            container.innerHTML = db.logs.map(l => `<div class="log-item">[${l.time}] <strong>${l.msg}</strong></div>`).join('');
-            if(db.logs.length === 0) container.innerHTML = "<p>لا توجد حركات مسجلة بعد.</p>";
-            document.getElementById('logs-modal').style.display = 'flex';
-        }
-
-        // الإشعارات المنبثقة
-        function showToast(msg, type) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            const icon = type === 'success' ? 'fa-circle-check' : 'fa-bell';
-            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${msg}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.animation = 'fadeOut 0.4s ease forwards'; setTimeout(() => toast.remove(), 400); }, 3000);
-        }
-
-        function toggleTheme() {
-            const isLight = document.body.getAttribute('data-theme') === 'light';
-            if(isLight) {
-                document.body.removeAttribute('data-theme');
-                document.getElementById('themeIcon').classList.replace('fa-sun', 'fa-moon');
-                localStorage.setItem('saas_theme', 'dark');
-            } else {
-                document.body.setAttribute('data-theme', 'light');
-                document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
-                localStorage.setItem('saas_theme', 'light');
-            }
-            renderUI(); // إعادة رسم الشارت بالألوان الجديدة
-        }
-
-        function exportExcel() {
-            let csv = `\uFEFFرقم الدار,الاسم,قيمة الاشتراك,حالة الدفع (شهر ${currentMonth})\n`;
-            db.houses.forEach(h => { csv += `${h.id},${h.name},5000,${h.payments[currentMonth] ? 'مسدد' : 'لم يسدد'}\n`; });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `تقرير_شهر_${currentMonth}.csv`; link.click();
-        }
-
-        function resetSystemData() {
-            if(confirm("هل أنت متأكد من رغبتك في تصفير جميع البيانات نهائياً والعودة لنقطة الصفر؟")) {
-                localStorage.removeItem(DB_KEY);
-                location.reload();
-            }
-        }
-
-        window.onload = initApp;
+        // بدء التشغيل
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
