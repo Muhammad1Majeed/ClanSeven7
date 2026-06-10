@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>كروب دمار شامل | بث مباشر</title>
-    <!-- خطوط عربية فاخرة -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <!-- أيقونات FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- مكتبة HLS.js -->
+    
+    <!-- مكتبات المشغل الاحترافية -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
 
     <style>
         :root {
@@ -114,7 +114,7 @@
             animation: pulse 1.5s infinite;
         }
 
-        /* الهيكل الرئيسي (Grid/Flex) */
+        /* الهيكل الرئيسي */
         .main-layout {
             display: flex;
             flex-wrap: wrap;
@@ -283,7 +283,7 @@
 
         /* حاوية المشغل */
         .player-section {
-            display: none; /* يظهر بعد ضغط الزر */
+            display: none;
             width: 100%;
             animation: fadeIn 0.8s ease forwards;
         }
@@ -424,7 +424,7 @@
             box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
         }
 
-        /* قسم السايدبار (شفاف وأنيق) */
+        /* قسم السايدبار */
         .side-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
@@ -449,7 +449,6 @@
             padding-bottom: 10px;
         }
 
-        /* قائمة المشاهدين */
         .viewers-list {
             display: flex;
             flex-wrap: wrap;
@@ -500,7 +499,6 @@
             scroll-behavior: smooth;
         }
 
-        /* تصميم شريط التمرير (Scrollbar) للدردشة */
         .chat-messages::-webkit-scrollbar {
             width: 6px;
         }
@@ -620,7 +618,6 @@
             box-shadow: 0 0 10px var(--neon-red);
         }
 
-        /* أنيميشن */
         @keyframes pulse {
             0% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.6; transform: scale(1.1); }
@@ -638,12 +635,11 @@
 
         .fade-in { animation: fadeIn 0.8s ease forwards; }
 
-        /* الميديا كويري للموبايل والوضع الأفقي */
         @media (max-width: 992px) {
             .main-layout { flex-direction: column; padding: 20px 5%; }
             .content-column, .sidebar-column { width: 100%; flex: none; }
             .side-panel { max-height: 600px; }
-            .player-controls { opacity: 1; padding: 10px; } /* إظهار الأزرار دائماً في الموبايل */
+            .player-controls { opacity: 1; padding: 10px; }
         }
         
         @media (max-width: 500px) {
@@ -678,11 +674,9 @@
 
     <main class="main-layout">
         
-        <!-- القسم الرئيسي: المباراة والمشغل -->
         <div class="content-column">
             <div class="match-card fade-in" id="match-intro">
                 <div class="teams-logos">
-                    <!-- صور منتخبات رسمية من مصادر عالية الجودة -->
                     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e4/Iraq_Football_Association_logo.svg/300px-Iraq_Football_Association_logo.svg.png" alt="العراق" class="team-logo">
                     <span class="vs">VS</span>
                     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Venezuelan_Football_Federation_logo.svg/300px-Venezuelan_Football_Federation_logo.svg.png" alt="فنزويلا" class="team-logo">
@@ -719,7 +713,6 @@
                 </button>
             </div>
 
-            <!-- حاوية المشغل تظهر عند الضغط -->
             <div class="player-section" id="player-section">
                 <div class="player-wrapper" id="player-container">
                     <div class="loading-overlay" id="loading-overlay">
@@ -736,36 +729,29 @@
                     </div>
                 </div>
 
-                <!-- أزرار تبديل السيرفرات -->
                 <div class="servers-container" id="servers-container">
                     <button class="server-btn active" onclick="switchServer(0)">
                         <i class="fa-solid fa-server"></i> سيرفر 1 (الرئيسي)
                     </button>
                     <button class="server-btn" onclick="switchServer(1)">
-                        <i class="fa-solid fa-server"></i> سيرفر 2 (SD)
+                        <i class="fa-solid fa-server"></i> سيرفر 2 (جودة ثانية)
                     </button>
                     <button class="server-btn" onclick="switchServer(2)">
-                        <i class="fa-solid fa-server"></i> سيرفر 3 (HD)
-                    </button>
-                    <button class="server-btn" onclick="switchServer(3)">
-                        <i class="fa-solid fa-server"></i> سيرفر 4 (احتياطي)
+                        <i class="fa-solid fa-server"></i> سيرفر 3 (صيغة TS)
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- القسم الجانبي: المشاهدين والدردشة -->
         <div class="sidebar-column fade-in">
             <div class="side-panel">
                 <h3 class="panel-title"><i class="fa-solid fa-users"></i> المشاهدون حالياً</h3>
                 <div class="viewers-list" id="viewers-list">
-                    <!-- يتم توليد القائمة عبر JS -->
                 </div>
 
                 <h3 class="panel-title" style="margin-top: 10px;"><i class="fa-solid fa-comments"></i> الدردشة المباشرة</h3>
                 <div class="chat-container">
                     <div class="chat-messages" id="chat-messages">
-                        <!-- الرسائل ستظهر هنا -->
                     </div>
                     <div class="chat-inputs">
                         <div class="input-row">
@@ -779,7 +765,6 @@
         </div>
     </main>
 
-    <!-- تهيئة الفايربيس (تأكد أن النوع module) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -797,17 +782,15 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const chatRef = ref(db, 'match_chat_iraq_venezuela'); // مسار مخصص للدردشة
+        const chatRef = ref(db, 'match_chat_iraq_venezuela');
 
         const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
         const chatName = document.getElementById('chat-name');
         const sendBtn = document.getElementById('send-btn');
         
-        // منع التكرار بتخزين معرّفات الرسائل المحملة
         const loadedMessages = new Set();
 
-        // استماع للرسائل الجديدة
         onChildAdded(chatRef, (snapshot) => {
             const data = snapshot.val();
             const key = snapshot.key;
@@ -818,13 +801,12 @@
             displayMessage(data.name, data.text, data.timestamp);
         });
 
-        // دالة الإرسال
         function sendMessage() {
             const text = chatInput.value.trim();
             let name = chatName.value.trim();
             
             if (text === "") return;
-            if (name === "") name = "زائر"; // اسم افتراضي
+            if (name === "") name = "زائر";
 
             push(chatRef, {
                 name: name,
@@ -840,7 +822,6 @@
             if (e.key === 'Enter') sendMessage();
         });
 
-        // دالة عرض الرسالة في الـ HTML
         function displayMessage(name, text, timestamp) {
             let timeString = "--:--";
             if (timestamp) {
@@ -850,7 +831,6 @@
                 timeString = `${hrs}:${mins}`;
             }
 
-            // حرف الافتراضي للصورة
             const initial = name.charAt(0) || 'U';
 
             const msgDiv = document.createElement('div');
@@ -866,12 +846,10 @@
                 </div>
             `;
             chatMessages.appendChild(msgDiv);
-            // التمرير التلقائي للأسفل
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
     </script>
 
-    <!-- أكواد المشغل والعداد والواجهة -->
     <script>
         // 1. توليد قائمة المشاهدين
         const viewers = [
@@ -919,20 +897,32 @@
             }
         }, 1000);
 
-        // 3. نظام السيرفرات ومشغل HLS
+        // 3. نظام السيرفرات ومشغل احترافي يدعم HLS و TS بدون تقطيع
         const servers = [
-            "http://imn-live.esite-lab.com/hls/iraqia-sports-1.m3u8",
-            "http://135.125.196.66:8080/alwan_1_sd/tracks-v1a1/mono.m3u8", // تم إزالة الاستعلامات الزائدة ليعمل بشكل سليم
-            "http://135.125.196.66:8080/alwan_1_hd/tracks-v1a1/mono.m3u8",
-            "http://marveltv.info/live/856107999101/576199010991/154339.m3u8"
+            "http://s1eed.store/live/9499781389/7742676539/402386.m3u8",
+            "http://s1eed.store/live/9499781389/7742676539/402392.m3u8",
+            "http://pro.netmos.ovh:7355/live/MMTVO89S7DY7CNV7SD/P7HIDSPCN580WXH90/181661.ts"
         ];
         
         let currentServerIndex = 0;
         let hlsInstance = null;
+        let mpegtsPlayer = null; // لمشغل الـ TS
         const video = document.getElementById('hls-video');
         const loadingOverlay = document.getElementById('loading-overlay');
 
-        // دالة تحميل السيرفر
+        // دالة تنظيف المشغلات السابقة قبل التحويل لسيرفر جديد
+        function destroyPlayers() {
+            if (hlsInstance) {
+                hlsInstance.destroy();
+                hlsInstance = null;
+            }
+            if (mpegtsPlayer) {
+                mpegtsPlayer.destroy();
+                mpegtsPlayer = null;
+            }
+            video.src = "";
+        }
+
         window.switchServer = function(index) {
             currentServerIndex = index;
             
@@ -948,40 +938,59 @@
 
         function loadStream(url) {
             loadingOverlay.classList.add('active');
-            
-            if (hlsInstance) {
-                hlsInstance.destroy();
-            }
+            destroyPlayers();
 
-            if (Hls.isSupported()) {
-                hlsInstance = new Hls({ capLevelToPlayerSize: true });
-                hlsInstance.loadSource(url);
-                hlsInstance.attachMedia(video);
-                
-                hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => console.log("Play interrupted"));
-                    loadingOverlay.classList.remove('active');
-                });
+            const isTS = url.endsWith('.ts');
 
-                // التحويل التلقائي (Auto-Fallback) عند الخطأ
-                hlsInstance.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        console.warn("فشل السيرفر الحالي، جاري التحويل للسيرفر التالي...");
-                        let nextIndex = (currentServerIndex + 1) % servers.length;
-                        switchServer(nextIndex);
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // لأجهزة أبل / Safari
-                video.src = url;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play();
-                    loadingOverlay.classList.remove('active');
-                });
-                video.addEventListener('error', function() {
-                    let nextIndex = (currentServerIndex + 1) % servers.length;
-                    switchServer(nextIndex);
-                });
+            if (isTS) {
+                // تشغيل صيغة TS باستخدام مكتبة mpegts
+                if (mpegts.getFeatureList().mseLivePlayback) {
+                    mpegtsPlayer = mpegts.createPlayer({
+                        type: 'mpegts',
+                        isLive: true,
+                        url: url
+                    });
+                    mpegtsPlayer.attachMediaElement(video);
+                    mpegtsPlayer.load();
+                    mpegtsPlayer.play().catch(e => console.log("Play interrupted"));
+                    
+                    mpegtsPlayer.on(mpegts.Events.MEDIA_INFO, () => loadingOverlay.classList.remove('active'));
+                    mpegtsPlayer.on(mpegts.Events.ERROR, (e) => {
+                        console.warn("خطأ في تشغيل سيرفر TS، يرجى تغيير السيرفر.");
+                        loadingOverlay.classList.remove('active');
+                    });
+                }
+            } else {
+                // تشغيل صيغة M3U8 باستخدام HLS بوضعية الاحتراف (مانع التقطيع)
+                if (Hls.isSupported()) {
+                    hlsInstance = new Hls({ 
+                        capLevelToPlayerSize: true,
+                        maxBufferLength: 30, // زيادة التخزين المؤقت لمنع التقطيع
+                        liveSyncDurationCount: 3,
+                        enableWorker: true
+                    });
+                    hlsInstance.loadSource(url);
+                    hlsInstance.attachMedia(video);
+                    
+                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                        video.play().catch(e => console.log("Play interrupted"));
+                        loadingOverlay.classList.remove('active');
+                    });
+
+                    hlsInstance.on(Hls.Events.ERROR, function (event, data) {
+                        if (data.fatal) {
+                            console.warn("فشل السيرفر الحالي، يرجى اختيار سيرفر آخر.");
+                            hlsInstance.destroy();
+                            loadingOverlay.classList.remove('active');
+                        }
+                    });
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url;
+                    video.addEventListener('loadedmetadata', function() {
+                        video.play();
+                        loadingOverlay.classList.remove('active');
+                    });
+                }
             }
         }
 
@@ -989,7 +998,6 @@
         document.getElementById("watch-btn").addEventListener("click", function() {
             if (!isLive) return;
             
-            // إخفاء معلومات المباراة وإظهار المشغل والسيرفرات
             document.getElementById("match-intro").style.display = "none";
             document.getElementById("player-section").style.display = "block";
 
