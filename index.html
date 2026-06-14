@@ -2,1050 +2,467 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>كروب دمار شامل | بث مباشر</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- مكتبات المشغل الاحترافية -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنصة الوزارية الشاملة - قواعد السادس العلمي</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Amiri:wght@700&display=swap');
+        
         :root {
-            --bg-dark: #0a0a0f;
-            --glass-bg: rgba(20, 25, 35, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --primary-red: #e63946;
-            --neon-red: rgba(230, 57, 70, 0.8);
-            --primary-green: #2a9d8f;
-            --neon-green: rgba(42, 157, 143, 0.8);
-            --text-light: #f8f9fa;
-            --text-muted: #adb5bd;
-            --accent-blue: #457b9d;
+            --primary: #1a252f;
+            --secondary: #2980b9;
+            --accent: #e74c3c;
+            --bg: #ecf0f1;
+            --paper: #ffffff;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
         body {
             font-family: 'Tajawal', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            overflow-x: hidden;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: var(--bg);
+            color: #000;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
         }
-
-        /* خلفية متحركة وإضاءة نيون */
-        .bg-effects {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            overflow: hidden;
-            background: radial-gradient(circle at 15% 50%, rgba(230, 57, 70, 0.08), transparent 50%),
-                        radial-gradient(circle at 85% 30%, rgba(42, 157, 143, 0.05), transparent 50%);
-        }
-
-        /* شريط علوي */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 5%;
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border);
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--primary);
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-
-        .logo-area {
+        .navbar h1 {
+            color: #fff;
+            margin: 0 0 15px 0;
+            font-size: 24px;
+        }
+        .tabs {
             display: flex;
-            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
             gap: 10px;
-            font-weight: 900;
-            font-size: 1.4rem;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px var(--neon-red);
         }
-
-        .logo-area i {
-            color: var(--primary-red);
-            font-size: 1.6rem;
-        }
-
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(42, 157, 143, 0.15);
-            color: var(--primary-green);
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            border: 1px solid rgba(42, 157, 143, 0.3);
-            box-shadow: 0 0 10px rgba(42, 157, 143, 0.2);
-        }
-
-        .status-badge.live {
-            background: rgba(230, 57, 70, 0.15);
-            color: var(--primary-red);
-            border-color: rgba(230, 57, 70, 0.3);
-            box-shadow: 0 0 15px rgba(230, 57, 70, 0.3);
-            display: none;
-        }
-
-        .dot {
-            width: 8px;
-            height: 8px;
-            background-color: currentColor;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-
-        /* الهيكل الرئيسي */
-        .main-layout {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 30px 5%;
-            flex: 1;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .content-column {
-            flex: 1 1 65%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            min-width: 300px;
-        }
-
-        .sidebar-column {
-            flex: 1 1 30%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            min-width: 300px;
-        }
-
-        /* بطاقة المباراة */
-        .match-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 30px 20px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        .match-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
-        }
-
-        .teams-logos {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            margin-bottom: 20px;
-        }
-
-        .team-logo {
-            width: 90px;
-            height: 90px;
-            object-fit: contain;
-            filter: drop-shadow(0 5px 15px rgba(255,255,255,0.1));
-        }
-
-        .match-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .vs {
-            color: var(--primary-red);
-            font-size: 2rem;
-            text-shadow: 0 0 15px var(--neon-red);
-        }
-
-        .match-details {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .detail-badge {
-            background: rgba(255, 255, 255, 0.05);
+        .tab-btn {
+            background-color: transparent;
+            color: #fff;
+            border: 2px solid var(--secondary);
             padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            border: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* العداد التنازلي */
-        .countdown {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            direction: ltr;
-        }
-
-        .time-box {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 15px;
-            width: 75px;
-            text-align: center;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.02);
-        }
-
-        .time-box span {
-            display: block;
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--primary-green);
-        }
-
-        .time-box label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
-
-        /* زر المشاهدة */
-        .action-btn {
-            background: linear-gradient(45deg, #222, #444);
-            color: #888;
-            border: none;
-            padding: 16px 40px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            border-radius: 50px;
-            cursor: not-allowed;
             font-family: inherit;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .action-btn.active {
-            background: linear-gradient(45deg, var(--primary-red), #ff003c);
-            color: #fff;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(230, 57, 70, 0.5);
-        }
-
-        .action-btn.active:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 40px var(--neon-red);
-        }
-
-        /* حاوية المشغل */
-        .player-section {
-            display: none;
-            width: 100%;
-            animation: fadeIn 0.8s ease forwards;
-        }
-
-        .player-wrapper {
-            width: 100%;
-            background: #000;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-            aspect-ratio: 16/9;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        
-        .loading-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top-color: var(--primary-red);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        .player-controls {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            direction: ltr;
-        }
-
-        .player-wrapper:hover .player-controls {
-            opacity: 1;
-        }
-
-        .control-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: color 0.2s, transform 0.2s;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .control-btn:hover {
-            color: var(--primary-red);
-            background: rgba(255,255,255,0.1);
-            transform: scale(1.1);
-        }
-
-        .live-indicator {
-            background: var(--primary-red);
-            color: #fff;
-            font-size: 0.7rem;
-            font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 4px;
-            letter-spacing: 1px;
-            animation: pulse 2s infinite;
-        }
-
-        .spacer { flex: 1; }
-
-        /* مبدل السيرفرات */
-        .servers-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .server-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-light);
-            padding: 10px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: 700;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .server-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .server-btn.active {
-            background: rgba(230, 57, 70, 0.2);
-            border-color: var(--primary-red);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
-        }
-
-        /* قسم السايدبار */
-        .side-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            max-height: 800px;
-        }
-
-        .panel-title {
-            font-size: 1.2rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 10px;
-        }
-
-        .viewers-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .viewer-tag {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--glass-border);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--primary-green);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--neon-green);
-            animation: pulse 2s infinite;
-        }
-
-        /* الدردشة */
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            overflow: hidden;
-            min-height: 350px;
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            scroll-behavior: smooth;
-        }
-
-        .chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-        .chat-messages::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.02);
-        }
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        .message {
-            display: flex;
-            gap: 10px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .msg-avatar {
-            width: 35px;
-            height: 35px;
-            background: var(--accent-blue);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-weight: bold;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .msg-content {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 10px 14px;
-            border-radius: 0 16px 16px 16px;
-            position: relative;
-            max-width: 85%;
-        }
-
-        .msg-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 4px;
-            gap: 10px;
-        }
-
-        .msg-name {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: var(--primary-green);
-        }
-
-        .msg-time {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .msg-text {
-            font-size: 0.95rem;
-            line-height: 1.4;
-            word-wrap: break-word;
-        }
-
-        .chat-inputs {
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            border-top: 1px solid var(--glass-border);
-            gap: 8px;
-        }
-
-        .input-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .chat-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-family: inherit;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .chat-input:focus {
-            border-color: var(--primary-red);
-        }
-
-        .name-input {
-            width: 30%;
-            min-width: 80px;
-            border-radius: 20px;
-        }
-
-        .send-btn {
-            background: var(--primary-red);
-            color: #fff;
-            border: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
+            border-radius: 5px;
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
+        }
+        .tab-btn:hover, .tab-btn.active {
+            background-color: var(--secondary);
+        }
+        .tab-btn.golden {
+            border-color: #f1c40f;
+            color: #f1c40f;
+        }
+        .tab-btn.golden:hover, .tab-btn.golden.active {
+            background-color: #f1c40f;
+            color: #000;
         }
 
-        .send-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 10px var(--neon-red);
+        /* Content Area */
+        .container {
+            padding: 20px;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Actions */
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        .btn-download {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: inherit;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .btn-download:hover {
+            transform: translateY(-2px);
+            background-color: #2ecc71;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
+        /* Exam Paper Styles (Compact) */
+        .ep {
+            background-color: var(--paper);
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 25px;
+            border: 2px solid #000;
+            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+            font-size: 15px;
+            position: relative;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Watermark */
+        .ep::before {
+            content: "المرشحات الوزارية";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 100px;
+            color: rgba(0,0,0,0.03);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+            font-weight: 900;
         }
-
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-
-        .fade-in { animation: fadeIn 0.8s ease forwards; }
-
-        @media (max-width: 992px) {
-            .main-layout { flex-direction: column; padding: 20px 5%; }
-            .content-column, .sidebar-column { width: 100%; flex: none; }
-            .side-panel { max-height: 600px; }
-            .player-controls { opacity: 1; padding: 10px; }
-        }
+        .ep > * { position: relative; z-index: 1; }
         
-        @media (max-width: 500px) {
-            .match-title { font-size: 1.6rem; }
-            .vs { font-size: 1.3rem; }
-            .time-box { width: 65px; padding: 10px; }
-            .time-box span { font-size: 1.4rem; }
-            .teams-logos { gap: 15px; }
-            .team-logo { width: 60px; height: 60px; }
-            .name-input { width: 40%; }
-        }
+        .hd { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; font-weight: bold; text-align: center; }
+        .hd h2 { margin: 5px 0; font-size: 20px; }
+        .si { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; }
+        .si span { border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; }
+        .nt { text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 15px; text-decoration: underline; }
+        .q { margin-bottom: 15px; }
+        .qt { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+        .br { margin-bottom: 8px; padding-right: 15px; }
+        .bt { font-weight: bold; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .mk { font-weight: normal; font-size: 14px; }
+        .rb { color: #c0392b; font-size: 12px; font-weight: bold; background-color: #fadbd8; padding: 2px 6px; border-radius: 4px; margin-right: 8px; border: 1px solid #e6b0aa; white-space: nowrap; }
+        .gb { color: #856404; font-size: 12px; font-weight: bold; background-color: #fff3cd; padding: 2px 6px; border-radius: 4px; margin-right: 8px; border: 1px solid #ffeeba; }
+        .qr { font-family: 'Amiri', serif; color: #2c3e50; font-weight: bold; font-size: 17px; }
+        ul, ol { margin: 3px 0; padding-right: 25px; }
+        li { margin-bottom: 4px; }
+        .ft { text-align: center; margin-top: 20px; font-weight: bold; font-size: 16px; border-top: 2px solid #000; padding-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="bg-effects"></div>
+    <div class="navbar">
+        <h1>المنصة الوزارية الشاملة - قواعد السادس العلمي</h1>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('exam1')">الاختبار الأول</button>
+            <button class="tab-btn" onclick="openTab('exam2')">الاختبار الثاني</button>
+            <button class="tab-btn" onclick="openTab('exam3')">الاختبار الثالث</button>
+            <button class="tab-btn" onclick="openTab('exam4')">الاختبار الرابع</button>
+            <button class="tab-btn" onclick="openTab('exam5')">الاختبار الخامس</button>
+            <button class="tab-btn golden" onclick="openTab('golden')">⭐ المرشحات الذهبية</button>
+        </div>
+    </div>
 
-    <header class="header">
-        <div class="logo-area">
-            <i class="fa-solid fa-satellite-dish"></i>
-            كروب دمار شامل
-        </div>
-        <div class="status-badge" id="waiting-badge">
-            <div class="dot"></div>
-            في الانتظار
-        </div>
-        <div class="status-badge live" id="live-badge-top">
-            <div class="dot"></div>
-            بث مباشر
-        </div>
-    </header>
-
-    <main class="main-layout">
+    <div class="container">
         
-        <div class="content-column">
-            <div class="match-card fade-in" id="match-intro">
-                <div class="teams-logos">
-                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e4/Iraq_Football_Association_logo.svg/300px-Iraq_Football_Association_logo.svg.png" alt="العراق" class="team-logo">
-                    <span class="vs">VS</span>
-                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Venezuelan_Football_Federation_logo.svg/300px-Venezuelan_Football_Federation_logo.svg.png" alt="فنزويلا" class="team-logo">
+        <div id="exam1" class="tab-content active">
+            <div class="ep" id="paper-exam1">
+                <div class="hd">
+                    <div style="text-align: right;">جمهورية العراق - وزارة التربية<br>الدراسة: الإعدادية (السادس العلمي)</div>
+                    <div><h2>اختبار وزاري شامل (رقم 1)</h2>المادة: قواعد اللغة العربية</div>
+                    <div style="text-align: left;"><br>الوقت: 3 ساعات<br>الدور: التدريبي الأقوى</div>
                 </div>
-
-                <h1 class="match-title">
-                    العراق <span style="color: var(--text-muted); font-size: 1.5rem;">ضد</span> فنزويلا
-                </h1>
-
-                <div class="match-details">
-                    <div class="detail-badge"><i class="fa-solid fa-trophy"></i> مباراة ودية دولية</div>
-                    <div class="detail-badge"><i class="fa-regular fa-clock"></i> 4:00 فجراً</div>
-                    <div class="detail-badge"><i class="fa-solid fa-location-dot"></i> توقيت مكة المكرمة</div>
+                <div class="si"><div>اسم الطالب: <span></span></div><div>الرقم الامتحاني: <span></span></div></div>
+                <div class="nt">ملاحظة: أجب عن خمسة أسئلة فقط، ولكل سؤال (20) درجة.</div>
+                
+                <div class="q"><div class="qt">س1: أجب عن فرعين مما يأتي:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿أَفَلَا يَتَدَبَّرُونَ الْقُرْآنَ أَمْ عَلَىٰ قُلُوبٍ أَقْفَالُهَا﴾</span>. ما خصيصة الهمزة؟ وما نوع الاستفهام؟ <span class="rb">تكرر 14 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال الشاعر: <em>وكيفَ أخافُ الفقرَ...</em> أعرب اسم الاستفهام معللاً، ثم استبدل (هل) بحرف مناسب. <span class="rb">تكرر 9 مرات</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) قال تعالى: <span class="qr">﴿وَمَا مُحَمَّدٌ إِلَّا رَسُولٌ﴾</span>. بيّن نوع (ما) الواردة واذكر السبب. <span class="rb">تكرر 16 مرة</span> <span class="mk">(10 درجات)</span></div></div>
                 </div>
-
-                <div class="countdown" id="countdown-timer">
-                    <div class="time-box">
-                        <span id="seconds">00</span>
-                        <label>ثانية</label>
-                    </div>
-                    <div class="time-box">
-                        <span id="minutes">00</span>
-                        <label>دقيقة</label>
-                    </div>
-                    <div class="time-box">
-                        <span id="hours">00</span>
-                        <label>ساعة</label>
-                    </div>
+                <div class="q"><div class="qt">س2:</div>
+                    <div class="br"><div class="bt">أ) ما الأثر الإعرابي والمعنوي لأداتي النفي (لَمْ) و (لَنْ)؟ <span class="rb">تكرر 11 مرة</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿لِلَّهِ الْأَمْرُ مِن قَبْلُ وَمِن بَعْدُ﴾</span>. عيِّن التقديم، وبيِّن نوعه وحكمه. <span class="rb">تكرر 18 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) اجعل النفي في (لَسْتُ مُسَافِراً) مؤكداً بطريقتين. <span class="rb">تكرر 13 مرة</span> <span class="mk">(6 درجات)</span></div></div>
                 </div>
-
-                <button class="action-btn" id="watch-btn" disabled>
-                    <i class="fa-solid fa-lock" id="btn-icon"></i>
-                    <span id="btn-text">يبدأ البث قريباً</span>
-                </button>
+                <div class="q"><div class="qt">س3:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿إِيَّاكَ نَعْبُدُ﴾</span>. دلّ على المتقدم مبيناً نوعه وحكمه وغايته. <span class="rb">تكرر 21 مرة</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) استخرج التوكيد وبيّن نوعه: 1- <span class="qr">﴿كَلَّا إِذَا دُكَّتِ الْأَرْضُ دَكًّا دَكًّا﴾</span> 2- (واللهِ لَأَنْصُرَنَّ الْمَظْلُومَ). <span class="rb">تكرر 10 مرات</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) استخرج المنادى مبيناً نوعه: <em>يا دارَ عَبْلَةَ بِالجَواءِ تَكَلَّمي</em>. <span class="rb">تكرر 8 مرات</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س4:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿بِئْسَ الِاسْمُ الْفُسُوقُ﴾</span>. استخرج فعل الذم وفاعله، وأعرب المخصوص. <span class="rb">تكرر 15 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿أَسْمِعْ بِهِمْ وَأَبْصِرْ﴾</span>. دلّ على التعجب واذكر صيغته وأعرب المتعجب منه. <span class="rb">تكرر 12 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س5:</div>
+                    <div class="br"><div class="bt">أ) بيّن حكم توكيد المضارع: <span class="qr">﴿تَاللَّهِ لَتُسْأَلُنَّ﴾</span> و <span class="qr">﴿لَا تَحْسَبَنَّ﴾</span>. <span class="rb">تكرر 9 مرات</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿وَلَاتَ حِينَ مَنَاصٍ﴾</span>. ما المحذوف؟ وما إعراب (حينَ)؟ <span class="rb">تكرر 14 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) أمدح (العلم) بـ (نِعْمَ) مرة وبـ (حبّذا) مرة. <span class="rb">تكرر 7 مرات</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س6:</div>
+                    <div class="br"><div class="bt">أ) ما الفرق بين (ما) في: (مَا كُلُّ مَا يَتَمَنَّى الْمَرْءُ يُدْرِكُهُ) و <span class="qr">﴿وَمَا الْحَيَاةُ الدُّنْيَا إِلَّا مَتَاعُ﴾</span>؟ <span class="rb">تكرر 12 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) صُغ تعجب قياسي (ما أَفْعَلَهُ) من (حُمِرَتِ الوَرْدَةُ) معللاً. <span class="rb">تكرر 11 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="ft">دعواتنا لكم بالتفوق والدرجات العُلا</div>
             </div>
-
-            <div class="player-section" id="player-section">
-                <div class="player-wrapper" id="player-container">
-                    <div class="loading-overlay" id="loading-overlay">
-                        <div class="spinner"></div>
-                    </div>
-                    <video id="hls-video" playsinline></video>
-                    <div class="player-controls">
-                        <button class="control-btn" id="play-pause-btn" title="تشغيل/إيقاف"><i class="fa-solid fa-pause"></i></button>
-                        <button class="control-btn" id="mute-btn" title="كتم الصوت"><i class="fa-solid fa-volume-high"></i></button>
-                        <span class="live-indicator">LIVE</span>
-                        <div class="spacer"></div>
-                        <button class="control-btn" id="pip-btn" title="صورة داخل صورة"><i class="fa-solid fa-clone"></i></button>
-                        <button class="control-btn" id="fullscreen-btn" title="ملء الشاشة"><i class="fa-solid fa-expand"></i></button>
-                    </div>
-                </div>
-
-                <div class="servers-container" id="servers-container">
-                    <button class="server-btn active" onclick="switchServer(0)">
-                        <i class="fa-solid fa-server"></i> سيرفر 1 (الرئيسي)
-                    </button>
-                    <button class="server-btn" onclick="switchServer(1)">
-                        <i class="fa-solid fa-server"></i> سيرفر 2 (جودة ثانية)
-                    </button>
-                    <button class="server-btn" onclick="switchServer(2)">
-                        <i class="fa-solid fa-server"></i> سيرفر 3 (صيغة TS)
-                    </button>
-                </div>
+            <div class="actions">
+                <button class="btn-download" onclick="downloadImage('paper-exam1', 'الاختبار_الوزاري_الاول')">حفظ الاختبار كصورة 📸</button>
             </div>
         </div>
 
-        <div class="sidebar-column fade-in">
-            <div class="side-panel">
-                <h3 class="panel-title"><i class="fa-solid fa-users"></i> المشاهدون حالياً</h3>
-                <div class="viewers-list" id="viewers-list">
+        <div id="exam2" class="tab-content">
+            <div class="ep" id="paper-exam2">
+                <div class="hd">
+                    <div style="text-align: right;">جمهورية العراق - وزارة التربية<br>الدراسة: الإعدادية (السادس العلمي)</div>
+                    <div><h2>اختبار وزاري شامل (رقم 2)</h2>المادة: قواعد اللغة العربية</div>
+                    <div style="text-align: left;"><br>الوقت: 3 ساعات<br>الدور: التدريبي الأقوى</div>
                 </div>
-
-                <h3 class="panel-title" style="margin-top: 10px;"><i class="fa-solid fa-comments"></i> الدردشة المباشرة</h3>
-                <div class="chat-container">
-                    <div class="chat-messages" id="chat-messages">
-                    </div>
-                    <div class="chat-inputs">
-                        <div class="input-row">
-                            <input type="text" id="chat-name" class="chat-input name-input" placeholder="اسمك..." maxlength="15">
-                            <input type="text" id="chat-input" class="chat-input" placeholder="اكتب رسالتك هنا..." autocomplete="off">
-                            <button class="send-btn" id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
-                        </div>
-                    </div>
+                <div class="si"><div>اسم الطالب: <span></span></div><div>الرقم الامتحاني: <span></span></div></div>
+                <div class="nt">ملاحظة: أجب عن خمسة أسئلة فقط، ولكل سؤال (20) درجة.</div>
+                
+                <div class="q"><div class="qt">س1:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿وَيَقُولُونَ مَتَى هَذَا الْوَعْدُ﴾</span>. أعرب اسم الاستفهام، ثم اجعله في محل نصب ظرف. <span class="rb">تكرر 12 مرة</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) <em>أَلَمْ تَرَ أَنَّ الحُبَّ...</em> ما خصيصة الهمزة؟ وهل يجوز استبدال (هل)؟ <span class="rb">تكرر 15 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) انْفِ مراعياً الدلالة الزمنية: (قَدْ سَافَرَ عَلِيٌّ). <span class="rb">تكرر 11 مرة</span> <span class="mk">(6 درجات)</span></div></div>
                 </div>
+                <div class="q"><div class="qt">س2:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿إِنَّمَا وَلِيُّكُمُ اللَّهُ﴾</span>. استخرج المتقدم، مبيناً نوعه وحكمه والسبب. <span class="rb">تكرر 18 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿وَمَا ظَلَمْنَاهُمْ﴾</span>. (ما) نافية غير عاملة، علل، ثم أكد نفيها. <span class="rb">تكرر 10 مرات</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س3:</div>
+                    <div class="br"><div class="bt">أ) استخرج المنادى وحكمه: <span class="qr">﴿يَا أَيُّهَا النَّبِيُّ إِنَّا أَرْسَلْنَاكَ﴾</span>. <span class="rb">تكرر 9 مرات</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) تعجب قياسياً (أَفْعِلْ بِهِ) من: (يُكَافَأُ الْمُجِدُّ). <span class="rb">تكرر 12 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) أكّد وجوباً بالنون: (وَأَبْذُلُ فِي مَرْضَاةِ رَبِّي جُهُودِي). <span class="rb">تكرر 8 مرات</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س4:</div>
+                    <div class="br"><div class="bt">أ) عيّن التوكيد ونوعه: 1- <span class="qr">﴿السَّابِقُونَ السَّابِقُونَ﴾</span> 2- حَضَرَ المُدِيرُ نَفْسُهُ. <span class="rb">تكرر 14 مرة</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) أعرب اسم الاستفهام: <span class="qr">﴿قُلْ مَن رَّبُّ السَّمَاوَاتِ وَالْأَرْضِ قُلِ اللَّهُ﴾</span>. <span class="rb">تكرر 11 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) اجعل (كم) الاستفهامية خبرية: (كَمْ كِتَاباً قَرَأْتَ؟). <span class="rb">تكرر 7 مرات</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س5:</div>
+                    <div class="br"><div class="bt">أ) استخرج معمولي ليس وأكدها: <em>لَيْسَ اليَتِيمُ مَنِ انْتَهَى أَبَوَاهُ</em>. <span class="rb">تكرر 16 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) ما نوع (لا) وإعراب ما بعدها: <span class="qr">﴿لَا عَاصِمَ الْيَوْمَ مِنْ أَمْرِ اللَّهِ﴾</span>. <span class="rb">تكرر 14 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س6:</div>
+                    <div class="br"><div class="bt">أ) استخرج التقديم وحكمه: <span class="qr">﴿لَهُمْ دَارُ السَّلَامِ عِندَ رَبِّهِمْ﴾</span>. <span class="rb">تكرر 15 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) ذُمَّ (النفاق) بفعل فاعله مستتر. <span class="rb">تكرر 9 مرات</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="ft">دعواتنا لكم بالتفوق والدرجات العُلا</div>
+            </div>
+            <div class="actions">
+                <button class="btn-download" onclick="downloadImage('paper-exam2', 'الاختبار_الوزاري_الثاني')">حفظ الاختبار كصورة 📸</button>
             </div>
         </div>
-    </main>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDYDSaOBIggJZCxdr5GpKuybVWRmheDeZk",
-            authDomain: "superleague-ade00.firebaseapp.com",
-            databaseURL: "https://superleague-ade00-default-rtdb.firebaseio.com",
-            projectId: "superleague-ade00",
-            storageBucket: "superleague-ade00.firebasestorage.app",
-            messagingSenderId: "302472752303",
-            appId: "1:302472752303:web:ecdf68070451cd2583785a",
-            measurementId: "G-FCBPDHVHCB"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const chatRef = ref(db, 'match_chat_iraq_venezuela');
-
-        const chatMessages = document.getElementById('chat-messages');
-        const chatInput = document.getElementById('chat-input');
-        const chatName = document.getElementById('chat-name');
-        const sendBtn = document.getElementById('send-btn');
-        
-        const loadedMessages = new Set();
-
-        onChildAdded(chatRef, (snapshot) => {
-            const data = snapshot.val();
-            const key = snapshot.key;
-
-            if (loadedMessages.has(key)) return;
-            loadedMessages.add(key);
-
-            displayMessage(data.name, data.text, data.timestamp);
-        });
-
-        function sendMessage() {
-            const text = chatInput.value.trim();
-            let name = chatName.value.trim();
-            
-            if (text === "") return;
-            if (name === "") name = "زائر";
-
-            push(chatRef, {
-                name: name,
-                text: text,
-                timestamp: serverTimestamp()
-            });
-
-            chatInput.value = "";
-        }
-
-        sendBtn.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        function displayMessage(name, text, timestamp) {
-            let timeString = "--:--";
-            if (timestamp) {
-                const date = new Date(timestamp);
-                const hrs = date.getHours().toString().padStart(2, '0');
-                const mins = date.getMinutes().toString().padStart(2, '0');
-                timeString = `${hrs}:${mins}`;
-            }
-
-            const initial = name.charAt(0) || 'U';
-
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message';
-            msgDiv.innerHTML = `
-                <div class="msg-avatar">${initial}</div>
-                <div class="msg-content">
-                    <div class="msg-header">
-                        <span class="msg-name">${name}</span>
-                        <span class="msg-time">${timeString}</span>
-                    </div>
-                    <div class="msg-text">${text}</div>
+        <div id="exam3" class="tab-content">
+            <div class="ep" id="paper-exam3">
+                <div class="hd">
+                    <div style="text-align: right;">جمهورية العراق - وزارة التربية<br>الدراسة: الإعدادية (السادس العلمي)</div>
+                    <div><h2>اختبار وزاري شامل (رقم 3)</h2>المادة: قواعد اللغة العربية</div>
+                    <div style="text-align: left;"><br>الوقت: 3 ساعات<br>الدور: التدريبي الأقوى</div>
                 </div>
-            `;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-    </script>
+                <div class="si"><div>اسم الطالب: <span></span></div><div>الرقم الامتحاني: <span></span></div></div>
+                <div class="nt">ملاحظة: أجب عن خمسة أسئلة فقط، ولكل سؤال (20) درجة.</div>
+                
+                <div class="q"><div class="qt">س1:</div>
+                    <div class="br"><div class="bt">أ) <em>بِمَ التَعَلُّلُ لا أَهْلٌ وَلا وَطَنُ</em>. ما إعراب الاستفهام؟ وما التغيير الذي طرأ عليه؟ <span class="rb">تكرر 13 مرة</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) ما خصيصة الهمزة: <span class="qr">﴿أَئِنَّكُمْ لَتَشْهَدُونَ﴾</span> وهل يجوز استبدال (هل)؟ <span class="rb">تكرر 14 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) ما نوع اللام وفائدتها: <span class="qr">﴿وَمَا كَانَ اللَّهُ لِيُعَذِّبَهُمْ﴾</span>. <span class="rb">تكرر 16 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س2:</div>
+                    <div class="br"><div class="bt">أ) عيّن التقديم وحكمه: <span class="qr">﴿فَرِيقًا هَدَى وَفَرِيقًا حَقَّ عَلَيْهِمُ الضَّلَالَةُ﴾</span>. <span class="rb">تكرر 11 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) استخرج معمولي (ما) واجعلها مهملة: <em>وما حُسْنُ الرِّجَالِ لَهُمْ بِفَخْرٍ</em>. <span class="rb">تكرر 10 مرات</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س3:</div>
+                    <div class="br"><div class="bt">أ) استخرج التوكيد ونوعه: <span class="qr">﴿قَدْ أَفْلَحَ الْمُؤْمِنُونَ﴾</span> و <span class="qr">﴿إِنَّ الْإِنسَانَ لَفِي خُسْرٍ﴾</span>. <span class="rb">تكرر 9 مرات</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) دلّ على المنادى وحكمه: <em>يا أَعْدَلَ النّاسِ إِلاّ في مُعامَلَتي</em>. <span class="rb">تكرر 12 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) أكّد معنوياً بـ (كلا/كلتا): (فَازَ المُتَسَابِقَانِ .....). <span class="rb">تكرر 8 مرات</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س4:</div>
+                    <div class="br"><div class="bt">أ) استخرج التعجب وصيغته وأعرب المتعجب منه: <em>أَكْرِمْ بِقَوْمٍ رَسُولُ اللَّهِ شِيعَتُهُمْ</em>. <span class="rb">تكرر 12 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) دلّ على فعل المدح وقدر المخصوص: <span class="qr">﴿وَلَنِعْمَ دَارُ الْمُتَّقِينَ﴾</span>. <span class="rb">تكرر 17 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س5:</div>
+                    <div class="br"><div class="bt">أ) ما دلالة وإعراب (أيّ): <em>أَيَّ قُلُوبٍ هَذَا الشَّوْقُ يُفْلِقُهَا</em>. <span class="rb">تكرر 11 مرة</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) صُغ تعجب قياسي (ما أفْعَلَهُ) من: (لا يُهْزَمُ الحَقُّ) معللاً. <span class="rb">تكرر 14 مرة</span> <span class="mk">(12 درجة)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س6:</div>
+                    <div class="br"><div class="bt">أ) ما شروط عمل لات والمحذوف: <em>وَلَاتَ ساعَةَ مَندَمٍ</em>. <span class="rb">تكرر 16 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) استخرج أركان المدح وأعرب المخصوص: (حَبَّذَا الصِّدْقُ خُلُقاً). <span class="rb">تكرر 10 مرات</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="ft">دعواتنا لكم بالتفوق والدرجات العُلا</div>
+            </div>
+            <div class="actions">
+                <button class="btn-download" onclick="downloadImage('paper-exam3', 'الاختبار_الوزاري_الثالث')">حفظ الاختبار كصورة 📸</button>
+            </div>
+        </div>
+
+        <div id="exam4" class="tab-content">
+            <div class="ep" id="paper-exam4">
+                <div class="hd">
+                    <div style="text-align: right;">جمهورية العراق - وزارة التربية<br>الدراسة: الإعدادية (السادس العلمي)</div>
+                    <div><h2>اختبار وزاري شامل (رقم 4)</h2>المادة: قواعد اللغة العربية</div>
+                    <div style="text-align: left;"><br>الوقت: 3 ساعات<br>الدور: التدريبي الأقوى</div>
+                </div>
+                <div class="si"><div>اسم الطالب: <span></span></div><div>الرقم الامتحاني: <span></span></div></div>
+                <div class="nt">ملاحظة: أجب عن خمسة أسئلة فقط، ولكل سؤال (20) درجة.</div>
+                
+                <div class="q"><div class="qt">س1: أجب عن فرعين مما يأتي:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿أَفَلَمْ يَنظُرُوا إِلَى السَّمَاءِ فَوْقَهُمْ﴾</span>. ما خصيصة الهمزة في النص الكريم؟ <span class="rb">تكرر 12 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿ذَلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ﴾</span>. دل على أداة النفي مبيناً نوعها، ثم أعرب ما تحتها خط (رَيْبَ). <span class="rb">تكرر 17 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) قال الشاعر: <em>فَلِلَّهِ دَرِّي يَوْمَ أُتْرَكُ طَائِعاً</em>. ما نوع الأسلوب؟ وما صيغته؟ <span class="rb">تكرر 11 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س2:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿وَإِيَّايَ فَارْهَبُونِ﴾</span>. في النص تقديم، حَدِّدْهُ، وبيّن نوعه، وحكمه، والغرض منه. <span class="rb">تكرر 19 مرة</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) بيّن التوكيد اللفظي ونوعه فيما يأتي: 1- (صَبْراً صَبْراً). 2- <span class="qr">﴿فَمَهِّلِ الْكَافِرِينَ أَمْهِلْهُمْ رُوَيْدًا﴾</span>. <span class="rb">تكرر 9 مرات</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) <em>كَمْ مِنْ كَرِيمٍ قَدْ بَلَيْتُ بِفَقْدِهِ</em>. ما نوع (كم)؟ وما إعرابها؟ ولماذا؟ <span class="rb">تكرر 14 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س3:</div>
+                    <div class="br"><div class="bt">أ) قال الشاعر: <em>أَيا فاطِمَ أَشْجَى المُسْلِمِينَ وِفَاتُكِ</em>. سَمِّ أسلوب النداء، ثم أعرب المنادى. <span class="rb">تكرر 8 مرات</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿وَلَبِئْسَ مَثْوَى الظَّالِمِينَ﴾</span>. حدد أركان جملة الذم، مع بيان نوع الفاعل. <span class="rb">تكرر 15 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) <em>أَيَّ فَتًى أَلْقَاكَ فِي الرَّوْعِ مُعْلِماً</em>. ما إعراب اسم الاستفهام؟ معللاً. <span class="rb">تكرر 10 مرات</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س4:</div>
+                    <div class="br"><div class="bt">أ) <em>وَمَا أَنَا لِلبَاغِينَ فِي الحُبِّ رَاحِمٌ</em>. ما نوع (ما)؟ وكيف تؤكد نفيها؟ <span class="rb">تكرر 16 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) استخرج المتقدم وحكمه: <em>فِي القَلْبِ غُصَّةٌ لا تَمْحُوهَا السِّنُونَ</em>. <span class="rb">تكرر 13 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س5:</div>
+                    <div class="br"><div class="bt">أ) انْفِ الجملة محافظاً على الزمن: (لَقَدْ كَانَ لَكُمْ فِي رَسُولِ اللَّهِ أُسْوَةٌ). <span class="rb">تكرر 14 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) (أَطَرِبْتَ وَأَنْتَ المُقِيمُ؟) استبدل (هل) بالهمزة مغيراً ما يلزم معللاً. <span class="rb">تكرر 11 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س6:</div>
+                    <div class="br"><div class="bt">أ) أكد ما تحته خط توكيداً معنوياً: سَلَّمْتُ عَلَى (المُعَلِّمَيْنِ). <span class="rb">تكرر 7 مرات</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿لَّيْسَ عَلَيْكَ هُدَاهُمْ﴾</span>. استخرج معمولي (ليس) مبيناً نوعيهما. <span class="rb">تكرر 18 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="ft">دعواتنا لكم بالتفوق والدرجات العُلا</div>
+            </div>
+            <div class="actions">
+                <button class="btn-download" onclick="downloadImage('paper-exam4', 'الاختبار_الوزاري_الرابع')">حفظ الاختبار كصورة 📸</button>
+            </div>
+        </div>
+
+        <div id="exam5" class="tab-content">
+            <div class="ep" id="paper-exam5">
+                <div class="hd">
+                    <div style="text-align: right;">جمهورية العراق - وزارة التربية<br>الدراسة: الإعدادية (السادس العلمي)</div>
+                    <div><h2>اختبار وزاري شامل (رقم 5)</h2>المادة: قواعد اللغة العربية</div>
+                    <div style="text-align: left;"><br>الوقت: 3 ساعات<br>الدور: التدريبي الأقوى</div>
+                </div>
+                <div class="si"><div>اسم الطالب: <span></span></div><div>الرقم الامتحاني: <span></span></div></div>
+                <div class="nt">ملاحظة: أجب عن خمسة أسئلة فقط، ولكل سؤال (20) درجة.</div>
+                
+                <div class="q"><div class="qt">س1:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿سَوَاءٌ عَلَيْهِمْ أَأَنذَرْتَهُمْ أَمْ لَمْ تُنذِرْهُمْ لَا يُؤْمِنُونَ﴾</span>. سَمِّ الهمزة الواردة، وما نوع (أم)؟ <span class="rb">تكرر 13 مرة</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿يَا صَاحِبَيِ السِّجْنِ أَمَّا أَحَدُكُمَا فَيَسْقِي رَبَّهُ خَمْرًا﴾</span>. أعرب المنادى، مبيناً نوعه. <span class="rb">تكرر 10 مرات</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) قال تعالى: <span class="qr">﴿إِن يَنصُرْكُمُ اللَّهُ فَلَا غَالِبَ لَكُمْ﴾</span>. ما نوع (إن) الواردة في النص الكريم؟ <span class="rb">تكرر 14 مرة</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س2:</div>
+                    <div class="br"><div class="bt">أ) استخرج التقديم وحكمه: <span class="qr">﴿وَلِمَنْ خَافَ مَقَامَ رَبِّهِ جَنَّتَانِ﴾</span>. <span class="rb">تكرر 16 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) <em>يا حَبَّذا جَبَلُ الرَّيّانِ مِن جَبَلٍ</em>. أعرب المخصوص بالمدح. <span class="rb">تكرر 12 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س3:</div>
+                    <div class="br"><div class="bt">أ) <em>أَيْنَ الَّذِينَ رَأَوْا فينا مَكارِمَهُم</em>. ما إعراب اسم الاستفهام؟ وما السبب؟ <span class="rb">تكرر 11 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿فَمَا لَكُمْ فِي الْمُنَافِقِينَ فِئَتَيْنِ﴾</span>. دلّ على التقديم مبيناً نوعه. <span class="rb">تكرر 9 مرات</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س4:</div>
+                    <div class="br"><div class="bt">أ) بيّن نوع (لا): <span class="qr">﴿لَا الشَّمْسُ يَنبَغِي لَهَا أَن تُدْرِكَ الْقَمَرَ وَلَا اللَّيْلُ سَابِقُ النَّهَارِ﴾</span>. <span class="rb">تكرر 15 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) صغ تعجباً قياسياً من: (صَفَا الجَوُّ) بالطريقتين المباشرة وغير المباشرة. <span class="rb">تكرر 8 مرات</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س5:</div>
+                    <div class="br"><div class="bt">أ) <em>إِنَّمَا الأُمَمُ الأَخْلَاقُ مَا بَقِيَتْ</em>. ما الطريقة التي قُصِرَ بها المبتدأ على الخبر؟ <span class="rb">تكرر 17 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) ما الفرق بين (لَمْ) و (لَمَّا) في نفي الفعل المضارع؟ مع الأمثلة. <span class="rb">تكرر 19 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س6: أجب عن فرعين:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿يَا أَيُّهَا الْإِنسَانُ مَا غَرَّكَ بِرَبِّكَ الْكَرِيمِ﴾</span>. ما إعراب (أيُّ)؟ وما إعراب (الإنسان)؟ <span class="rb">تكرر 11 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿فَنِعْمَ أَجْرُ الْعَامِلِينَ﴾</span>. قدر المخصوص بالمدح. <span class="rb">تكرر 13 مرة</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) استخرج التوكيد ونوعه: <em>إِنَّمَا نَحْنُ مُصْلِحُونَ</em>. <span class="rb">تكرر 10 مرات</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="ft">دعواتنا لكم بالتفوق والدرجات العُلا</div>
+            </div>
+            <div class="actions">
+                <button class="btn-download" onclick="downloadImage('paper-exam5', 'الاختبار_الوزاري_الخامس')">حفظ الاختبار كصورة 📸</button>
+            </div>
+        </div>
+
+        <div id="golden" class="tab-content">
+            <div class="ep" id="paper-golden" style="border-color: #f39c12; box-shadow: 0 0 20px rgba(243, 156, 18, 0.2);">
+                <div class="hd" style="border-bottom-color: #f39c12;">
+                    <div style="text-align: right;">المنصة الوزارية الشاملة<br>لجنة المراجعة المركزة</div>
+                    <div><h2 style="color: #d35400;">⭐ المرشحات الذهبية للوزاري ⭐</h2>المادة: قواعد اللغة العربية</div>
+                    <div style="text-align: left;"><br>نخبة من أهم الأفكار<br>المتوقع ورودها بقوة 2024-2025</div>
+                </div>
+                <div class="si"><div>اسم الطالب: <span></span></div><div>الرقم الامتحاني: <span></span></div></div>
+                <div class="nt" style="color: #c0392b;">ملاحظة هامة: هذه الأسئلة تعتبر بمثابة المراجعة الأقوى ليلة الامتحان، ركز عليها جداً.</div>
+                
+                <div class="q"><div class="qt">س1: أجب عن فرعين مما يأتي:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿فَمَا لِيَ لَا أَرَى الْهُدْهُدَ﴾</span>. ما إعراب (ما)؟ ولماذا؟ <span class="gb">مُرشح ذهبي</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) <em>بِنَفْسِي تِلْكَ الأَرْضُ ما أَطْيَبَ الرُّبا</em>. استخرج التعجب، واذكر صيغته، وأعرب المتعجب منه. <span class="gb">مُرشح ذهبي</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) قال تعالى: <span class="qr">﴿غَيْرُ بَاغٍ وَلَا عَادٍ﴾</span>. ما نوع (غير) و (لا)؟ <span class="gb">مُرشح ذهبي</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س2:</div>
+                    <div class="br"><div class="bt">أ) قال تعالى: <span class="qr">﴿مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ﴾</span>. أعرب (من ذا) موحدة غير مجزأة معللاً. <span class="gb">مُرشح ذهبي</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) <span class="qr">﴿إِيَّاكَ نَعْبُدُ﴾</span> ما نوع التقديم؟ وما حكمه لو تأخر المفعول به؟ <span class="gb">مُرشح ذهبي</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) <em>أَلَسْتُ بِأَخِيكَ؟</em> جرّد الجملة من حرف الجر الزائد مغيراً ما يلزم. <span class="gb">مُرشح ذهبي</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س3:</div>
+                    <div class="br"><div class="bt">أ) ما الفرق بين الهمزتين: <span class="qr">﴿أَفَلَا يَتَدَبَّرُونَ﴾</span> و <span class="qr">﴿أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ﴾</span> من حيث الخصيصة؟ <span class="gb">مُرشح ذهبي</span> <span class="mk">(8 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) (لَا يُرَدُّ الحَقُّ). تعجب قياسياً بصيغة (أَفْعِلْ بِهِ) مبيناً السبب. <span class="gb">مُرشح ذهبي</span> <span class="mk">(6 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ج) <em>كَمْ قَطَعْنَا دَرْباً مُخِيفاً</em>. اجعل (كم) الاستفهامية خبرية. <span class="gb">مُرشح ذهبي</span> <span class="mk">(6 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س4:</div>
+                    <div class="br"><div class="bt">أ) نادِ لفظ الجلالة (الله) بطريقتين مختلفتين، مع الضبط. <span class="gb">مُرشح ذهبي</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿بِئْسَمَا اشْتَرَوْا بِهِ أَنفُسَهُمْ﴾</span>. أين فاعل (بئس)؟ وما نوعه؟ <span class="gb">مُرشح ذهبي</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="q"><div class="qt">س5:</div>
+                    <div class="br"><div class="bt">أ) <em>أَيَّ مُنْقَلَبٍ يَنقَلِبُونَ</em>. ما دلالة وإعراب (أيّ)؟ <span class="gb">مُرشح ذهبي</span> <span class="mk">(10 درجات)</span></div></div>
+                    <div class="br"><div class="bt">ب) قال تعالى: <span class="qr">﴿عَلَى أَبْصَارِهِمْ غِشَاوَةٌ﴾</span>. عين المتقدم مبيناً حكمه والسبب. <span class="gb">مُرشح ذهبي</span> <span class="mk">(10 درجات)</span></div></div>
+                </div>
+                <div class="ft" style="border-top-color: #f39c12;">بالتوفيق لأبطال السادس الإعدادي - المرشحات الذهبية طريقك للـ 100</div>
+            </div>
+            <div class="actions">
+                <button class="btn-download" style="background-color: #f39c12;" onclick="downloadImage('paper-golden', 'المرشحات_الذهبية_قواعد')">حفظ المرشحات كصورة 📸</button>
+            </div>
+        </div>
+
+    </div>
 
     <script>
-        // 1. توليد قائمة المشاهدين
-        const viewers = [
-            "ليث اسامه", "عمر محمد", "طه محمد", "محمد مجيد", 
-            "عبدالرحمن احمد", "وائل مصطفى", "يونس شلال"
-        ];
-        const viewersContainer = document.getElementById("viewers-list");
-        viewers.forEach(name => {
-            viewersContainer.innerHTML += `
-                <div class="viewer-tag">
-                    <div class="status-dot"></div>
-                    ${name}
-                </div>
-            `;
-        });
+        function openTab(tabName) {
+            // Hide all tab contents
+            var contents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active");
+            }
+            // Remove active class from all buttons
+            var buttons = document.getElementsByClassName("tab-btn");
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+            // Show current tab and add active class to clicked button
+            document.getElementById(tabName).classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
 
-        // 2. نظام التوقيت والعداد
-        const targetDate = new Date("2026-06-10T04:00:00+03:00").getTime();
-        let isLive = false;
-
-        const timerInterval = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-
-            if (distance <= 0) {
-                clearInterval(timerInterval);
-                document.getElementById("countdown-timer").style.display = "none";
-                document.getElementById("waiting-badge").style.display = "none";
-                document.getElementById("live-badge-top").style.display = "flex";
+        function downloadImage(elementId, filename) {
+            var element = document.getElementById(elementId);
+            // Change style temporarily for better image rendering
+            element.style.borderRadius = "0";
+            element.style.boxShadow = "none";
+            
+            html2canvas(element, { 
+                scale: 2, // High resolution
+                useCORS: true,
+                backgroundColor: "#ffffff"
+            }).then(function(canvas) {
+                // Restore styles
+                element.style.boxShadow = "";
                 
-                const watchBtn = document.getElementById("watch-btn");
-                watchBtn.disabled = false;
-                watchBtn.classList.add("active");
-                document.getElementById("btn-icon").className = "fa-solid fa-play";
-                document.getElementById("btn-text").innerText = "شاهد المباراة الآن";
-                isLive = true;
-            } else {
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-                document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-                document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-            }
-        }, 1000);
-
-        // 3. نظام السيرفرات ومشغل احترافي يدعم HLS و TS بدون تقطيع
-        const servers = [
-            "http://s1eed.store/live/9499781389/7742676539/402386.m3u8",
-            "http://s1eed.store/live/9499781389/7742676539/402392.m3u8",
-            "http://pro.netmos.ovh:7355/live/MMTVO89S7DY7CNV7SD/P7HIDSPCN580WXH90/181661.ts"
-        ];
-        
-        let currentServerIndex = 0;
-        let hlsInstance = null;
-        let mpegtsPlayer = null; // لمشغل الـ TS
-        const video = document.getElementById('hls-video');
-        const loadingOverlay = document.getElementById('loading-overlay');
-
-        // دالة تنظيف المشغلات السابقة قبل التحويل لسيرفر جديد
-        function destroyPlayers() {
-            if (hlsInstance) {
-                hlsInstance.destroy();
-                hlsInstance = null;
-            }
-            if (mpegtsPlayer) {
-                mpegtsPlayer.destroy();
-                mpegtsPlayer = null;
-            }
-            video.src = "";
-        }
-
-        window.switchServer = function(index) {
-            currentServerIndex = index;
-            
-            // تحديث الأزرار بصرياً
-            const buttons = document.querySelectorAll('.server-btn');
-            buttons.forEach((btn, i) => {
-                if (i === index) btn.classList.add('active');
-                else btn.classList.remove('active');
+                var link = document.createElement('a');
+                link.download = filename + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
             });
-
-            loadStream(servers[index]);
-        };
-
-        function loadStream(url) {
-            loadingOverlay.classList.add('active');
-            destroyPlayers();
-
-            const isTS = url.endsWith('.ts');
-
-            if (isTS) {
-                // تشغيل صيغة TS باستخدام مكتبة mpegts
-                if (mpegts.getFeatureList().mseLivePlayback) {
-                    mpegtsPlayer = mpegts.createPlayer({
-                        type: 'mpegts',
-                        isLive: true,
-                        url: url
-                    });
-                    mpegtsPlayer.attachMediaElement(video);
-                    mpegtsPlayer.load();
-                    mpegtsPlayer.play().catch(e => console.log("Play interrupted"));
-                    
-                    mpegtsPlayer.on(mpegts.Events.MEDIA_INFO, () => loadingOverlay.classList.remove('active'));
-                    mpegtsPlayer.on(mpegts.Events.ERROR, (e) => {
-                        console.warn("خطأ في تشغيل سيرفر TS، يرجى تغيير السيرفر.");
-                        loadingOverlay.classList.remove('active');
-                    });
-                }
-            } else {
-                // تشغيل صيغة M3U8 باستخدام HLS بوضعية الاحتراف (مانع التقطيع)
-                if (Hls.isSupported()) {
-                    hlsInstance = new Hls({ 
-                        capLevelToPlayerSize: true,
-                        maxBufferLength: 30, // زيادة التخزين المؤقت لمنع التقطيع
-                        liveSyncDurationCount: 3,
-                        enableWorker: true
-                    });
-                    hlsInstance.loadSource(url);
-                    hlsInstance.attachMedia(video);
-                    
-                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
-                        video.play().catch(e => console.log("Play interrupted"));
-                        loadingOverlay.classList.remove('active');
-                    });
-
-                    hlsInstance.on(Hls.Events.ERROR, function (event, data) {
-                        if (data.fatal) {
-                            console.warn("فشل السيرفر الحالي، يرجى اختيار سيرفر آخر.");
-                            hlsInstance.destroy();
-                            loadingOverlay.classList.remove('active');
-                        }
-                    });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = url;
-                    video.addEventListener('loadedmetadata', function() {
-                        video.play();
-                        loadingOverlay.classList.remove('active');
-                    });
-                }
-            }
         }
-
-        // عند النقر على "شاهد المباراة الآن"
-        document.getElementById("watch-btn").addEventListener("click", function() {
-            if (!isLive) return;
-            
-            document.getElementById("match-intro").style.display = "none";
-            document.getElementById("player-section").style.display = "block";
-
-            // تحميل السيرفر الأول
-            switchServer(0);
-        });
-
-        // أحداث الفيديو لإخفاء دائرة التحميل أثناء البث
-        video.addEventListener('playing', () => loadingOverlay.classList.remove('active'));
-        video.addEventListener('waiting', () => loadingOverlay.classList.add('active'));
-
-        // 4. أزرار التحكم بالمشغل (Custom Controls)
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        const muteBtn = document.getElementById('mute-btn');
-        const pipBtn = document.getElementById('pip-btn');
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        const playerContainer = document.getElementById('player-container');
-
-        playPauseBtn.addEventListener('click', () => {
-            if (video.paused) {
-                video.play();
-                playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-            } else {
-                video.pause();
-                playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-            }
-        });
-
-        muteBtn.addEventListener('click', () => {
-            video.muted = !video.muted;
-            if (video.muted) muteBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
-            else muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-        });
-
-        pipBtn.addEventListener('click', async () => {
-            if (document.pictureInPictureElement) await document.exitPictureInPicture();
-            else if (document.pictureInPictureEnabled) await video.requestPictureInPicture();
-        });
-
-        fullscreenBtn.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                if(playerContainer.requestFullscreen) playerContainer.requestFullscreen();
-                else if(playerContainer.webkitRequestFullscreen) playerContainer.webkitRequestFullscreen();
-            } else {
-                if(document.exitFullscreen) document.exitFullscreen();
-                else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
-            }
-        });
     </script>
 </body>
 </html>
